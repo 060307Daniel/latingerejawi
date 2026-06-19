@@ -46,7 +46,7 @@ export async function GET() {
     },
   });
 
-  const enrichedPastors = pastors.map((pastor) => ({
+  const enrichedPastors = pastors.map((pastor: any) => ({
     ...pastor,
     ...(pastorProfiles[
       pastor.name as keyof typeof pastorProfiles
