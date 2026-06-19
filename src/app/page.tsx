@@ -4,11 +4,16 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { transformProgress } from "@/lib/progress/transform-progress";
 import { calculateModuleProgress } from "@/lib/progress-engine";
-import { COURSE_STRUCTURE } from "@/lib/course-structure";
+import {
+  COURSE_STRUCTURE,
+  ModuleSlug,
+} from "@/lib/course-structure";
 
 import InfoCard from "@/components/InfoCard";
 import SectionCard from "@/components/SectionCard";
 import PastorCard from "@/components/PastorCard";
+
+import BackgroundMusic from "@/components/BackgroundMusic";
 
 
 import {
@@ -27,14 +32,27 @@ import {
   BookCopy,
   Clock3,
   TrophyIcon,
+  ChurchIcon,
+  Scroll, Landmark, ArrowRight, CheckCircle2,
+  Book,
 } from "lucide-react";
 
 export default function HomePage() {
+
+const [pastorId, setPastorId] = useState<string | null>(null);
+
+
+
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] =
     useState(true);
 
   const [progressData, setProgressData] = useState<Record<string, string[]>>({});
+
+const [passedQuizCount, setPassedQuizCount] =
+  useState(0);
+
+const isPastor = user?.role === "PASTOR";
 
   const fetchProgress = async (userId: number) => {
   try {
@@ -44,18 +62,57 @@ export default function HomePage() {
 
     const progress = await res.json();
 
+     const passedQuizCount = progress.filter(
+      (item: any) =>
+        item.lessonSlug.startsWith("quiz-")
+    ).length;
+
+    setPassedQuizCount(passedQuizCount);
+
     const formatted = transformProgress(progress);
 
     setProgressData(formatted);
   } catch (err) {
     console.log(err);
   }
+
 };
 
-  const getModuleProgress = (moduleSlug: string) => {
-    const completed = progressData[moduleSlug] || [];
-    return calculateModuleProgress(moduleSlug, completed);
-  };
+const getModuleProgress = (
+  moduleSlug: ModuleSlug
+) => {
+  const completed =
+    progressData[moduleSlug] || [];
+
+  console.log("completed", completed);
+
+  return calculateModuleProgress(
+    moduleSlug,
+    completed
+  );
+};
+
+
+const isModuleCompleted = (
+  moduleSlug: ModuleSlug
+) => {
+  return getModuleProgress(moduleSlug) >= 100;
+};
+
+const isDoaDasarUnlocked =
+  isModuleCompleted("elementa-1");
+
+const isOrdinariumUnlocked =
+  isModuleCompleted("doa-doa-dasar");
+
+const isPujiSyukurUnlocked =
+  isModuleCompleted("ordinarium-misa");
+
+/*const isKataUmumUnlocked =
+  isModuleCompleted("puji-syukur");*/
+
+const isFinalUnlocked =
+  isModuleCompleted("puji-syukur");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -126,78 +183,134 @@ if (data?.id) {
     fetchUser();
   }, []);
 
-    const modules = [
+
+  useEffect(() => {
+  const syncPastor = () => {
+    setPastorId(localStorage.getItem("pastorId"));
+  };
+
+  syncPastor();
+
+  window.addEventListener("storage", syncPastor);
+
+  return () => {
+    window.removeEventListener("storage", syncPastor);
+  };
+}, []);
+
+   const modules = [
   {
-    title: "Elementa 1",
-    description: "Pengenalan huruf mati dan huruf hidup dalam bahasa Latin Gerejawi",
-    lessons: 6,
-    progress: getModuleProgress("elementa-1"),
+    title: "Elementa",
+    slug: "elementa-1",
+    description:
+      "Pengenalan huruf mati dan huruf hidup dalam bahasa Latin Gerejawi",
+
+    completed:
+      progressData["elementa-1"]?.length || 0,
+
+    lessons: COURSE_STRUCTURE["elementa-1"].length,
+
     unlocked: true,
+
     href: "/materi/elementa-1",
     icon: "📖",
   },
 
-    {
-      title: "Elementa 2",
-      description:
-        "Pengenalan dasar pengucapan dan aksen bahasa Latin",
-      lessons: 4,
-      progress: 0,
-      unlocked: false,
-      href: "#",
-      icon: "✝",
-    },
-    {
-      title: "Doa-doa Dasar",
-      description:
-        "Pengenalan doa-doa sederhana dalam Latin Gerejawi",
-      lessons: 3,
-      progress: 0,
-      unlocked: false,
-      href: "#",
-      icon: "🙏",
-    },
-    {
-      title: "Ordinarium Misa",
-      description:
-        "Penggunaan frasa liturgi dalam Gereja Katolik",
-      lessons: 2,
-      progress: 0,
-      unlocked: false,
-      href: "#",
-      icon: "👼",
-    },
-    {
-      title: "Puji Syukur",
-      description:
-        "Memahami dan mendalami teks Nyanyian dalam buku Puji Syukur",
-      lessons: 2,
-      progress: 0,
-      unlocked: false,
-      href: "#",
-      icon: "📿",
-    },
-    {
-      title: "Kata Umum Lainnya",
-      description:
-        "Bonus tambahan kata-kata yang sering digunakan dalam lingkungan gereja",
-      lessons: 4,
-      progress: 0,
-      unlocked: false,
-      href: "#",
-      icon: "🎵",
-    },
-    {
-      title: "Final Assement",
-      description:
-        "Uji kembali pengetahuan yang sudah dipelajari untuk mendapatkan sertifikat",
-      lessons: 2,
-      progress: 0,
-      unlocked: false,
-      href: "#",
-      icon: "📘",
-    },
-  ];
+  {
+    title: "Doa-doa Dasar",
+    slug: "doa-doa-dasar",
+    description:
+      "Pengenalan doa-doa sederhana dalam Latin Gerejawi",
+
+    completed:
+      progressData["doa-doa-dasar"]?.length || 0,
+
+    lessons:
+      COURSE_STRUCTURE["doa-doa-dasar"].length,
+
+    unlocked:
+      isModuleCompleted("elementa-1"),
+
+    href: "/materi/doa-doa-dasar",
+    icon: "🙏",
+  },
+
+  {
+    title: "Ordinarium Misa",
+    slug: "ordinarium-misa",
+    description:
+      "Penggunaan frasa liturgi dalam Gereja Katolik",
+
+    completed:
+      progressData["ordinarium-misa"]?.length || 0,
+
+    lessons:
+      COURSE_STRUCTURE["ordinarium-misa"].length,
+
+    unlocked:
+      isModuleCompleted("doa-doa-dasar"),
+
+    href: "/materi/ordinarium-misa",
+    icon: "👼",
+  },
+
+  {
+    title: "Puji Syukur",
+    slug: "puji-syukur",
+    description:
+      "Memahami dan mendalami teks nyanyian dalam buku Puji Syukur",
+
+    completed:
+      progressData["puji-syukur"]?.length || 0,
+
+    lessons:
+      COURSE_STRUCTURE["puji-syukur"].length,
+
+    unlocked:
+      isModuleCompleted("ordinarium-misa"),
+
+    href: "/materi/puji-syukur",
+    icon: "📿",
+  },
+
+  /*{
+    title: "Kata Umum Lainnya",
+    slug: "kata-umum",
+    description:
+      "Bonus tambahan kata-kata yang sering digunakan dalam lingkungan gereja",
+
+    completed:
+      progressData["kata-umum"]?.length || 0,
+
+    lessons:
+      COURSE_STRUCTURE["kata-umum"].length,
+
+    unlocked:
+      isModuleCompleted("puji-syukur"),
+
+    href: "/materi/kata-umum",
+    icon: "🎵",
+  },*/
+
+  {
+    title: "Quiz Terakhir",
+    slug: "final-assessment",
+    description:
+      "Uji kembali pengetahuan yang sudah dipelajari untuk mendapatkan sertifikat",
+
+    completed:
+      progressData["final-assessment"]?.length || 0,
+
+    lessons:
+      COURSE_STRUCTURE["final-assessment"].length,
+
+    unlocked:
+      isModuleCompleted("puji-syukur"),
+
+    href: "/materi/final-assessment",
+    icon: "📘",
+  },
+];
 
   const totalLessons =
     modules.reduce(
@@ -218,6 +331,15 @@ const totalProgress =
   totalLessons > 0
     ? Math.round((totalCompletedLessons / totalLessons) * 100)
     : 0;
+
+    const allModulesCompleted =
+  modules.length > 0 &&
+  modules.every((m) => {
+    const percent = Math.round(
+      ((m.completed ?? 0) / m.lessons) * 100
+    );
+    return percent >= 100;
+  });
 
   const handleLockedModule = (
     moduleName: string
@@ -258,6 +380,9 @@ const totalProgress =
 
   return (
     <main className="min-h-screen bg-[#f5f7fb] pb-10">
+
+       <BackgroundMusic />
+
       {/* HEADER */}
       <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-5 lg:flex-row lg:items-center lg:justify-between lg:px-6">
@@ -320,337 +445,328 @@ const totalProgress =
       <section className="mx-auto mt-6 max-w-7xl px-4 lg:mt-10 lg:px-6">
 
         {/* SECTION 1 */}
-        <SectionCard
-          title="Salve! Dominus Vobiscum! "
-          description="Selamat Datang di LatinGerejawi.com! Sebuah platform pembelajaran yang memperkenalkan bahasa Latin dalam konteks Gereja Katolik, sehingga pengguna dapat memahami doa, liturgi, dan warisan iman dengan lebih bermakna."
-          icon={
-            <BookText
-              className="text-[#b45309]"
-              size={28}
-            />
-          }
-        >
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    {/* SECTION 1 - HERO CLEAN */}
+<SectionCard
+  title="LatinGerejawi"
+  description="Salve! Dominus Vobiscum! Selamat Datang di sebuah platform pembelajaran yang memperkenalkan bahasa Latin dalam konteks Gereja Katolik, sehingga umat beriman dapat memahami warisan iman dengan lebih bermakna."
+  icon={<ChurchIcon className="text-red-600" size={28} />}
+  borderColor="border-red-200"
+  bgColor="bg-white"
+  centered
+>
 
-            <div className="rounded-2xl border border-[#f1dfb0] bg-white p-7 lg:min-h-[340px] lg:p-10">
+  {/* 2 CARDS ONLY */}
+  <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
 
-              <h3 className="text-xl font-bold text-[#b45309] lg:text-3xl">
-                Sejarah Singkat
-              </h3>
+    {/* CARD 1 - SEJARAH */}
+    <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-100 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-xl">
 
-              <p className="mt-2 text-lg font-semibold text-[#0d1333] lg:text-2xl">
-                Kenapa Bahasa Latin adalah Bahasa Gereja
-              </p>
-
-              <p className="mt-5 text-base leading-8 text-[#334155] lg:text-xl lg:leading-[45px]">
-                Latin menjadi bahasa resmi Gereja Katolik sejak abad ke-4,
-                menggantikan bahasa Yunani. Konsili Vatikan II (1962-1965)
-                memperbolehkan penggunaan bahasa vernakular, namun Latin tetap
-                menjadi bahasa resmi Gereja dan digunakan dalam dokumen-dokumen
-                penting serta liturgi khusus{" "}
-                <Link
-                  href="/sejarah-latin"
-                  className="underline text-black"
-                >
-                  ...selengkapnya
-                </Link>
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-[#f1dfb0] bg-white p-7 lg:min-h-[340px] lg:p-10">
-
-              <h3 className="text-xl font-bold text-[#b45309] lg:text-3xl">
-                Penggunaan dalam Gereja
-              </h3>
-
-              <p className="mt-2 text-lg font-semibold text-[#0d1333] lg:text-2xl">
-                Kapan kita menggunakan Bahasa Latin?
-              </p>
-
-              <p className="mt-5 text-base leading-8 text-[#334155] lg:text-xl lg:leading-[45px]">
-                Latin Gerejawi digunakan dalam Misa Tridentina, doa-doa resmi
-                seperti Rosario dan Liturgi Jam, dokumen-dokumen Kepausan,
-                dan nyanyian Gregorian. Mempelajari Latin membantu umat
-                memahami kekayaan tradisi liturgi Katolik dan memperdalam
-                spiritualitas mereka{" "}
-                <Link
-                  href="/penggunaan-latin"
-                  className="underline text-black"
-                >
-                  ...selengkapnya
-                </Link>
-              </p>
-            </div>
+      <div>
+        <div className="mb-6 flex items-center gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-red-600 transition-colors duration-300 group-hover:bg-red-600 group-hover:text-white">
+            <Book size={28} />
           </div>
-        </SectionCard>
+
+          <h3 className="text-2xl font-bold text-red-700 lg:text-2xl">
+            SEJARAH SINGKAT
+          </h3>
+        </div>
+
+        <p className="text-2xl font-semibold text-slate-800 mb-3">
+          Kenapa Bahasa Latin adalah Bahasa Gereja
+        </p>
+
+        <p className="text-lg leading-relaxed text-slate-600">
+          Latin menjadi bahasa resmi Gereja Katolik sejak abad ke-4, menggantikan bahasa Yunani. Konsili Vatikan II (1962-1965) memperbolehkan penggunaan bahasa vernakular, namun..
+        </p>
+      </div>
+
+      <div className="mt-6">
+        <Link
+          href="/sejarah-latin"
+          className="inline-flex items-center gap-2 text-lg font-semibold text-red-600 transition-all duration-300 hover:text-red-700 group-hover:gap-3"
+        >
+          ...selengkapnya <ArrowRight size={16} />
+        </Link>
+      </div>
+
+    </div>
+
+    {/* CARD 2 - PENGGUNAAN */}
+    <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-100 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-xl">
+
+      <div>
+        <div className="mb-6 flex items-center gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-50 text-red-600 transition-colors duration-300 group-hover:bg-red-600 group-hover:text-white">
+            <Landmark size={28} />
+          </div>
+
+          <h3 className="text-2xl font-bold text-red-700 lg:text-2xl">
+            PENGGUNAAN DALAM GEREJA
+          </h3>
+        </div>
+
+        <p className="text-2xl font-semibold text-slate-800 mb-3">
+          Kapan kita menggunakan Bahasa Latin?
+        </p>
+
+        <p className="text-lg leading-relaxed text-slate-600">
+          Latin Gerejawi digunakan dalam Misa Tridentina, doa-doa resmi seperti Rosario dan Liturgi Jam, dokumen-dokumen Kepausan, dan nyanyian Gregorian. Mempelajari Latin membantu umat memahami kekayaan tradisi liturgi Katolik dan..
+        </p>
+      </div>
+
+      <div className="mt-6">
+        <Link
+          href="/penggunaan-latin"
+          className="inline-flex items-center gap-2 text-lg font-semibold text-red-600 transition-all duration-300 hover:text-red-700 group-hover:gap-3"
+        >
+          ...selengkapnya <ArrowRight size={16} />
+        </Link>
+      </div>
+
+    </div>
+
+  </div>
+</SectionCard>
 
         {/* SECTION 2 */}
-        <div className="mt-8">
-          <SectionCard
-            title="Apa yang Akan Anda Dapatkan?"
-            description="Platform pembelajaran Latin Gerejawi yang komprehensif dengan materi terstruktur dari dasar hingga mahir."
-            borderColor="border-[#cae6d1]"
-            bgColor="bg-[#eefcf1]"
-            icon={
-              <Trophy
-                className="text-green-700"
-                size={28}
-              />
-            }
-          >
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      {/* SECTION 2 */}
+{/* SECTION 2 */}
+<div className="mt-10">
+  <SectionCard
+    title="Apa yang Akan Anda Dapatkan?"
+    description="Platform pembelajaran Latin Gerejawi yang komprehensif dengan materi terstruktur dari dasar hingga mahir."
+    borderColor="border-[#ffa600]/40"
+    bgColor="bg-white"
+    icon={<Trophy className="text-[#ffa600]" size={28} />}
+    centered
+  >
+    <div className="relative">
 
-              <div className="rounded-2xl border border-[#d7ecd9] bg-white p-7 lg:min-h-[340px] lg:p-10">
+      {/* soft background glow */}
+      <div className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-[#ffa600]/10 blur-3xl" />
+      <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-[#0d1333]/5 blur-3xl" />
 
-                <h3 className="text-xl font-bold text-[#15803d] lg:text-3xl">
-                  Materi Pembelajaran
-                </h3>
+      <div className="relative grid grid-cols-1 gap-6 md:grid-cols-2">
 
-                <div className="mt-6 space-y-5 text-base leading-8 text-[#334155] lg:text-xl lg:leading-[40px]">
+        {/* LEFT CARD - MATERI (with slight gold accent) */}
+        <div className="relative rounded-2xl border border-[#ffa600]/40 bg-white p-7 lg:p-10 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-[#ffa600]/80">
 
-                  <div className="flex items-start gap-4">
-                    <span className="text-2xl">
-                      📖
-                    </span>
+          <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-[#ffa600]/10 blur-2xl" />
 
-                    <p>
-                      Pelajari pengucapan Bahasa Latin Gerejawi secara bertahap
-                    </p>
-                  </div>
+          <h3 className="flex items-center gap-2 text-xl font-bold text-[#0d1333] lg:text-3xl">
+            <span className="text-[#ffa600]">✦</span>
+            Materi Pembelajaran
+          </h3>
 
-                  <div className="flex items-start gap-4">
-                    <span className="text-2xl">
-                      ✍
-                    </span>
-
-                    <p>
-                      Memahami tata bahasa dan kosakata dasar Latin
-                    </p>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <span className="text-2xl">
-                      🙏
-                    </span>
-
-                    <p>
-                      Belajar doa-doa Latin Gerejawi yang umum digunakan
-                    </p>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <span className="text-2xl">
-                      🎵
-                    </span>
-
-                    <p>
-                      Mengenal nyanyian Gregorian dan liturgi Gereja
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-[#d7ecd9] bg-white p-7 lg:min-h-[340px] lg:p-10">
-
-                <h3 className="text-xl font-bold text-[#15803d] lg:text-3xl">
-                  Benefit yang Didapat
-                </h3>
-
-                <div className="mt-6 space-y-5 text-base leading-8 text-[#334155] lg:text-xl lg:leading-[40px]">
-
-                  <div className="flex items-start gap-4">
-                    <span className="text-2xl">
-                      ⛪
-                    </span>
-
-                    <p>
-                      Memahami tradisi Gereja Katolik lebih mendalam
-                    </p>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <span className="text-2xl">
-                      📚
-                    </span>
-
-                    <p>
-                      Meningkatkan kemampuan membaca Bahasa Latin
-                    </p>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <span className="text-2xl">
-                      🗣
-                    </span>
-
-                    <p>
-                      Melatih pelafalan Latin Gerejawi dengan benar
-                    </p>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <span className="text-2xl">
-                      ✨
-                    </span>
-
-                    <p>
-                      Memperkaya pengalaman spiritual dan liturgi
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </SectionCard>
-        </div>
-
-        {/* SECTION 3 */}
-        <div className="mt-10 rounded-3xl border border-[#ead7ff] bg-[#faf5ff] p-5 lg:p-10">
-
-          {/* HEADER */}
-          <div className="mb-6 flex items-start gap-3 lg:mb-8 lg:items-center lg:gap-4">
-            <div className="text-3xl text-[#9333ea]">
-              🎓
-            </div>
-
-            <h2 className="text-2xl font-bold leading-tight text-[#0d1333] lg:text-5xl">
-              Pastor Pendamping Anda
-            </h2>
-          </div>
-
-          <p className="mb-8 text-base leading-8 text-[#64748b] lg:mb-10 lg:text-2xl">
-            Tim pastor yang siap membimbing perjalanan
-            pembelajaran Latin Gerejawi Anda
+          <p className="mt-3 text-2xl text-slate-700 leading-relaxed">
+            Anda akan mempelajari Bahasa Latin Gerejawi secara bertahap dari aturan yang ada sampai mendalami doa dan nyanyian Gereja
           </p>
 
-          {/* GRID */}
-          <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+          <div className="mt-6 space-y-4 text-slate-700">
 
-            <div
-              onClick={() =>
-                scrollToSection(
-                  "hubungi-pastor"
-                )
-              }
-              className="cursor-pointer"
-            >
-              <PastorCard
-                image="https://stfsp.ac.id/wp-content/uploads/2021/08/stenlyp-695x1024.jpg"
-                name="Dr. Stenly Vianny Pondaag, S.S., M.Th."
-                position="Dosen di Sekolah Tinggi Filsafat Seminari Pineleng"
-                education={[
-                  "S1 – Sekolah Tinggi Filsafat Seminari Pineleng, Manado",
-                  "S2 – Universität Innsbruck, Austria",
-                  "S3 – Universität Innsbruck, Austria",
-                ]}
-              />
+            <div className="text-xl flex gap-3">
+              <span className="text-[#ffa600]">📖</span>
+              <p>Pengucapan Bahasa Latin Gerejawi Sesuai Aturannya</p>
             </div>
 
-            <div
-              onClick={() =>
-                scrollToSection(
-                  "hubungi-pastor"
-                )
-              }
-              className="cursor-pointer"
-            >
-              <PastorCard
-                image="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800&auto=format&fit=crop"
-                name="Stefanus Ardi Watuseke, Lic.Teol.Dog."
-                position="Dosen di Sekolah Tinggi Filsafat Seminari Pineleng"
-                education={[
-                  "S1 – Sekolah Tinggi Filsafat Seminari Pineleng, Manado",
-                  "S2 – Pontificia Universitas Gregoriana, Roma",
-                ]}
-              />
+            <div className="text-xl flex gap-3">
+              <span className="text-[#ffa600]">✍</span>
+              <p>Mengenali Kosakata dalam Bahasa Latin Gerejawi</p>
             </div>
 
-            <div
-              onClick={() =>
-                scrollToSection(
-                  "hubungi-pastor"
-                )
-              }
-              className="cursor-pointer"
-            >
-              <PastorCard
-                image="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop"
-                name="Rm. Stefanus Kristofel Sondakh, Pr"
-                position="Pembina Liturgi Gregorian"
-                education={[
-                  "S1 Filsafat – Seminari Tinggi Pineleng, Manado",
-                  "S1 Teologi – Seminari Tinggi Pineleng, Manado",
-                  "S2 Musik Liturgi – Pontifical Institute of Sacred Music, Roma",
-                ]}
-              />
+            <div className="text-xl flex gap-3">
+              <span className="text-[#ffa600]">🙏</span>
+              <p>Belajar doa-doa Latin yang digunakan dalam liturgi</p>
             </div>
+
+            <div className="text-xl flex gap-3">
+              <span className="text-[#ffa600]">🎵</span>
+              <p>Mengenal nyanyian Gregorian dan tradisi Gereja</p>
+            </div>
+
           </div>
         </div>
+
+        {/* RIGHT CARD - BENEFIT (CLEAN NO ACCENT BACKGROUND) */}
+        <div className="relative rounded-2xl border border-[#ffa600]/40 bg-white p-7 lg:p-10 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-[#ffa600]/70">
+
+          <h3 className="flex items-center gap-2 text-xl font-bold text-[#0d1333] lg:text-3xl">
+            <span className="text-[#ffa600]">✦</span>
+            Benefit yang Didapat
+          </h3>
+
+          <p className="mt-3 text-2xl text-slate-700 leading-relaxed">
+            Pembelajaran ini membantu Anda tidak hanya memahami bahasa, tetapi juga mendalami tradisi dan spiritualitas Gereja.
+          </p>
+
+          <div className="mt-6 space-y-4 text-slate-700">
+
+            <div className="text-xl flex gap-3">
+              <span className="text-[#ffa600]">⛪</span>
+              <p>Memperkaya Pemahaman akan Warisan Iman</p>
+            </div>
+
+            <div className="text-xl flex gap-3">
+              <span className="text-[#ffa600]">📚</span>
+              <p>Meningkatkan Kemampuan Pelafalan</p>
+            </div>
+
+            <div className="text-xl flex gap-3">
+              <span className="text-[#ffa600]">🗣</span>
+              <p>Sertifikat Penyelesaian</p>
+            </div>
+
+            <div className="text-xl flex gap-3">
+              <span className="text-[#ffa600]">✨</span>
+              <p>Tim Pastor Yang Siap Membantu</p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </SectionCard>
+</div>
+        {/* SECTION 3 */}
+<div className="mt-12 rounded-3xl border border-red-100 bg-white p-6 lg:p-12">
+
+  {/* HEADER */}
+  <div className="mb-10 text-center">
+
+    <div className="mx-auto flex h-12 w-12 items-center justify-center text-3xl">
+        <GraduationCap className="text-[#E53935]" size={28} />
+    </div>
+
+    <h2 className="mt-4 text-3xl font-bold  lg:text-5xl">
+      Pastor Pendamping Anda
+    </h2>
+
+    <p className="mx-auto mt-3 text-base-600 lg:text-xl">
+      Terdapat para pastor yang siap membimbing perjalanan pembelajaran Latin Gerejawi
+    </p>
+
+  </div>
+
+  {/* GRID */}
+  <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+
+    {/* CARD 1 */}
+    <div className="group cursor-pointer rounded-3xl border border-red-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-xl">
+
+      <PastorCard
+        image="https://stfsp.ac.id/wp-content/uploads/2021/08/stenlyp-695x1024.jpg"
+        name="RP. Stenly Pondaag, MSC"
+        position="Pengajar di Seminari Keuskupan"
+        education={[
+          "S1 – STF Seminari Pineleng, Manado",
+          "S2 – Universität Innsbruck, Austria",
+          "S3 – Universität Innsbruck, Austria",
+        ]}
+      />
+    </div>
+
+    {/* CARD 2 */}
+    <div className="group cursor-pointer rounded-3xl border border-red-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-xl">
+
+      <PastorCard
+        image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6gEhxpnRYGc8F-29siUGxVwZBAIsYNBqbVjkOyMGNMfD9SjRwEUw6y5M&s=10"
+        name="RP. Stefanus Watuseke, MSC"
+        position="Pengajar di Seminari Keuskupan"
+        education={[
+          "S1 – STF Seminari Pineleng, Manado",
+          "S2 – Pontificia Universitas Gregoriana, Roma",
+        ]}
+      />
+    </div>
+
+    {/* CARD 3 */}
+    <div className="group cursor-pointer rounded-3xl border border-red-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-xl">
+
+      <PastorCard
+        image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIq60ks3mytiChRnHExKJOVYjAKUNTFNFk87Onx5dVFg&s=10"
+        name="RD. Louis Bayak"
+        position="Pengajar di Seminari Keuskupan"
+        education={[
+          "S1 Filsafat – Seminari Tinggi Pineleng, Manado",
+        ]}
+      />
+    </div>
+  </div>
+
+    <p className=" mt-6 text-center text-base-600 text-xl">
+      Fitur "Hubungi Pastor" terdapat dibawah halaman dan hanya bisa diakses sesudah login
+    </p>
+
+
+</div>
 
         {/* LANGKAH PENGGUNAAN */}
         <div className="mt-10 rounded-3xl border border-[#c7d7ff] bg-white p-5 lg:p-8">
 
-          <h2 className="text-2xl font-bold text-[#0d1333]">
+          <h2 className="text-4xl font-bold text-center text-[#0d1333]">
             Cara Menggunakan Aplikasi
           </h2>
 
-          <p className="mt-2 text-base text-slate-500">
+          <p className="mt-2 text-xl text-center text-slate-900 ">
             Ikuti langkah-langkah sederhana untuk memulai pembelajaran Anda
           </p>
 
           <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
 
-            <div className="rounded-3xl border-2 border-dashed border-[#93c5fd] p-6 text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#dbeafe] text-[#2563eb]">
+            <div className="rounded-3xl border-2 border-dashed border-[#806704] p-6 text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#fef3c7] text-[#d97706]">
                 <UserPlus size={30} />
               </div>
 
-              <h3 className="mt-5 text-xl font-bold text-[#0d1333]">
-                Langkah 1
+              <h3 className="mt-5 text-2xl font-bold text-[#0d1333]">
+                LANGKAH 1
               </h3>
 
-              <p className="mt-2 text-slate-500">
+              <p className="mt-2 text-lg">
                 Daftarkan diri Anda
               </p>
             </div>
 
-            <div className="rounded-3xl border-2 border-dashed border-[#86efac] p-6 text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#dcfce7] text-[#16a34a]">
+            <div className="rounded-3xl border-2 border-dashed border-[#0d1333] p-6 text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#dcfce7] text-[#0d1333]">
                 <FolderOpen size={30} />
               </div>
 
-              <h3 className="mt-5 text-xl font-bold text-[#0d1333]">
-                Langkah 2
+              <h3 className="mt-5 text-2xl font-bold text-[#0d1333]">
+                LANGKAH 2
               </h3>
 
-              <p className="mt-2 text-slate-500">
+              <p className="mt-2 text-lg">
                 Pilih Modul
               </p>
             </div>
 
-            <div className="rounded-3xl border-2 border-dashed border-[#facc15] p-6 text-center">
+            <div className="rounded-3xl border-2 border-dashed border-[#806704] p-6 text-center">
               <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#fef3c7] text-[#d97706]">
                 <BookMarked size={30} />
               </div>
 
-              <h3 className="mt-5 text-xl font-bold text-[#0d1333]">
+              <h3 className="mt-5 text-2xl font-bold text-[#0d1333]">
                 Langkah 3
               </h3>
 
-              <p className="mt-2 text-slate-500">
+              <p className="mt-2 text-lg">
                 Pelajari Materi
               </p>
             </div>
 
-            <div className="rounded-3xl border-2 border-dashed border-[#d8b4fe] p-6 text-center">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#f3e8ff] text-[#9333ea]">
+            <div className="rounded-3xl border-2 border-dashed border-[#0d1333] p-6 text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#dcfce7] text-[#0d1333]">
                 <ClipboardCheck size={30} />
               </div>
 
-              <h3 className="mt-5 text-xl font-bold text-[#0d1333]">
-                Langkah 4
+              <h3 className="mt-5 text-2xl font-bold text-[#0d1333]">
+                LANGKAH 4
               </h3>
 
-              <p className="mt-2 text-slate-500">
+              <p className="mt-2 text-lg">
                 Ikuti Kuis
               </p>
             </div>
@@ -669,7 +785,7 @@ const totalProgress =
             </button>
           </div>
 
-          <div className="mt-10 border-t pt-8">
+          {/*<div className="mt-10 border-t pt-8">
 
             <h2 className="text-2xl font-bold text-[#0d1333]">
               Video Tutorial
@@ -689,7 +805,7 @@ const totalProgress =
                 />
               </div>
             </div>
-          </div>
+          </div>*/}
         </div>
 
         {/* MODUL KURSUS */}
@@ -704,11 +820,11 @@ const totalProgress =
               {/* TRACKING */}
               <div className="overflow-hidden rounded-3xl bg-gradient-to-r from-[#dc2626] to-[#b91c1c] p-6 text-white shadow-lg">
 
-                <h2 className="text-3xl font-bold">
-                  Salve, Discipule!
+                <h2 className="text-5xl text-center font-bold">
+                  Salve Discipule!
                 </h2>
 
-                <p className="mt-2 text-base text-white/90">
+                <p className="mt-2 text-xl text-center text-white/90">
                   Selamat datang di perjalanan pembelajaran bahasa suci Gereja.
                 </p>
 
@@ -733,7 +849,7 @@ const totalProgress =
                       <TrophyIcon size={28} />
                       <div>
                         <h3 className="text-3xl font-bold">
-                          0/8
+                          {passedQuizCount}/7
                         </h3>
                         <p className="text-sm">
                           Kuis Lulus
@@ -760,15 +876,15 @@ const totalProgress =
 
               {/* PROGRESS */}
               <div className="mt-6 rounded-3xl bg-white p-6 shadow-sm">
-                <h2 className="text-2xl font-bold text-[#0d1333]">
+                <h2 className="text-4xl font-bold text-center text-[#0d1333]">
                   Progress Anda
                 </h2>
 
-                <p className="mt-2 text-slate-500">
-                  Lacak perjalanan Anda melalui Bahasa Latin Gerejawi
+                <p className="mt-2 text-center text-xl">
+                  Lacak perjalanan Anda dalam pembelajaran ini!
                 </p>
 
-                <div className="mt-6 flex items-center justify-between text-sm font-semibold text-slate-600">
+                <div className="mt-6 flex items-center justify-between text-lg font-semibold text-slate-700">
                   <span>Penyelesaian Keseluruhan</span>
                   <span>
                     {totalCompletedLessons} dari {totalLessons} pelajaran
@@ -788,8 +904,8 @@ const totalProgress =
           )}
 
           {/* TITLE */}
-          <h2 className="mt-10 text-3xl font-bold text-[#0d1333]">
-            Modul Kursus
+          <h2 className="mt-10 text-3xl  text-center font-bold text-[#0d1333]">
+            Modul Pembelajaran
           </h2>
 
           {/* MODE BELUM LOGIN */}
@@ -826,6 +942,14 @@ const totalProgress =
               const isLocked =
                 !user || !module.unlocked;
 
+               const completed = module.completed ?? 0;
+
+const percent = Math.round(
+  (completed / module.lessons) * 100
+);
+
+const isCompleted = percent >= 100;
+
               return (
                 <div
                   key={index}
@@ -841,7 +965,11 @@ const totalProgress =
                       );
                     }
                   }}
-                  className="rounded-3xl border bg-white p-6 shadow-sm transition hover:shadow-md"
+                  className={`rounded-3xl border p-6 shadow-sm transition hover:shadow-md ${
+  isCompleted
+    ? "border-yellow-300 bg-gradient-to-br from-yellow-50 via-amber-50 to-yellow-100"
+    : "bg-white"
+}`}
                 >
 
                   <div className="flex items-start justify-between gap-4">
@@ -853,16 +981,18 @@ const totalProgress =
 
                       <div>
                         <h3
-                          className={`text-xl font-bold transition ${
-                            module.unlocked
-                              ? "text-[#0d1333] hover:text-red-600"
-                              : "text-slate-500"
-                          }`}
+                          className={`text-2xl font-bold transition ${
+  isCompleted
+    ? "text-yellow-700"
+    : module.unlocked
+    ? "text-[#0d1333] hover:text-red-600"
+    : "text-slate-500"
+}`}
                         >
                           {module.title}
                         </h3>
 
-                        <p className="mt-2 text-sm leading-7 text-slate-500">
+                        <p className="mt-2 text-base leading-7 text-slate-800">
                           {module.description}
                         </p>
                       </div>
@@ -876,21 +1006,31 @@ const totalProgress =
                     )}
                   </div>
 
+                  {isCompleted && (
+  <div className="flex items-center gap-1 rounded-full bg-yellow-100 px-3 py-1 text- font-semibold text-yellow-700">
+    🏆 Selesai
+  </div>
+)}
+
                   <div className="mt-8 flex items-center justify-between text-sm font-semibold text-slate-500">
                     <span>
-                      {module.progress} / {module.lessons} pelajaran
-                    </span>
+  {module.completed} / {module.lessons} pelajaran
+</span>
 
                     <span>
-                      {module.progress}%
+                      {percent}%
                     </span>
                   </div>
 
                   <div className="mt-3 h-3 w-full overflow-hidden rounded-full bg-slate-200">
                     <div
-                      className="h-full rounded-full bg-red-600 transition-all duration-500"
+                      className={`h-full rounded-full transition-all duration-500 ${
+  isCompleted
+    ? "bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600"
+    : "bg-red-600"
+}`}
                       style={{
-                        width: `${module.progress}%`,
+                        width: `${percent}%`,
                       }}
                     ></div>
                   </div>
@@ -904,9 +1044,13 @@ const totalProgress =
                       }).map(
                         (_, idx) => (
                           <div
-                            key={idx}
-                            className="h-2 w-2 rounded-full bg-slate-300"
-                          ></div>
+  key={idx}
+  className={`h-2 w-2 rounded-full ${
+    isCompleted
+      ? "bg-yellow-500"
+      : "bg-slate-300"
+  }`}
+/>
                         )
                       )}
                     </div>
@@ -935,60 +1079,100 @@ const totalProgress =
           </div>
 
           {/* HUBUNGI PASTOR */}
-          <div
-            id="hubungi-pastor"
-            className="mt-10 rounded-3xl bg-white p-6 shadow-sm"
+  {/* HUBUNGI PASTOR */}
+<div
+  id="hubungi-pastor"
+  className="relative mt-10 overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-md"
+>
+
+  {/* decorative background blur */}
+  <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-[#9333ea] opacity-10 blur-3xl" />
+  <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-[#9333ea] opacity-10 blur-3xl" />
+
+  <div className="relative p-6 md:p-10">
+
+    {/* HEADER ICON */}
+    <div className="text-center">
+      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl">
+        <Mail className="text-[#E53935]" size={28} />
+      </div>
+
+      {/* TITLE */}
+      <h2 className="text-2xl md:text-3xl font-extrabold text-[#0d1333]">
+        {isPastor
+          ? "Pesan Masuk dari Umat"
+          : "Hubungi Pastor Pendamping"}
+      </h2>
+
+      {/* DESCRIPTION */}
+      <p className="mt-2 text-xl text-slate-900">
+        {isPastor
+          ? "Kelola dan tanggapi pesan umat seputar Bahasa Latin Gerejawi"
+          : "Ada pertanyaan seputar Bahsa Latin Gerejawi? Pastor siap membantu anda!"}
+      </p>
+    </div>
+
+    {/* NOT LOGIN */}
+    {!user ? (
+      <div className="mt-8 mx-auto max-w-md text-center rounded-2xl border bg-slate-50 p-6">
+        <p className="text-slate-800 text-lg md:text-lg">
+          Silakan login terlebih dahulu untuk memulai percakapan dengan pastor.
+        </p>
+
+        <Link
+          href="/login"
+          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-red-600 to-red-700 px-6 py-5 font-semibold text-white shadow-lg transition hover:scale-[1.02] active:scale-[0.98]"
+        >
+          <GraduationCap size={18} />
+          Login / Daftar
+        </Link>
+      </div>
+    ) : (
+
+      /* LOGGED IN */
+      <div className="mt-10 flex flex-col items-center gap-6">
+
+        <p className="text-red-700 text-xl text-center">
+          {isPastor
+            ? "Silakan tanggapi pesan umat dengan menekan tombol dibawah ini"
+            : "Klik tombol di bawah untuk memilih pastor dan memulai percakapan pribadi"}
+        </p>
+
+        {/* BUTTON */}
+        {isPastor ? (
+          <Link
+            href="/pastor/chat"
+            className="w-full max-w-xl rounded-2xl bg-red-600 px-6 py-4 text-center font-bold text-white shadow-lg transition hover:scale-[1.02]"
           >
+            Kelola Pesan Umat
+          </Link>
+        ) : (
+          <Link href="/pilih-pastor" className="group relative w-full max-w-xl">
 
-            <div className="text-center">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-600 to-red-700 px-6 py-5 text-center font-bold text-white shadow-lg transition-all duration-300 group-hover:shadow-2xl group-hover:scale-[1.02] active:scale-[0.98]">
 
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#f3e8ff] text-[#9333ea]">
-                <Mail size={28} />
+              {/* shimmer effect */}
+              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:translate-x-full transition duration-700" />
+
+              <div className="relative flex items-center justify-center gap-2 text-lg">
+                ✉ Mulai Konsultasi Sekarang
               </div>
 
-              <h2 className="mt-5 text-2xl font-bold text-[#0d1333]">
-                Hubungi Pastor Pendamping
-              </h2>
-
-              <p className="mt-2 text-slate-500">
-                Ada pertanyaan atau butuh bimbingan?
-              </p>
             </div>
+          </Link>
+        )}
 
-            {!user ? (
-              <div className="mt-8 text-center">
+        {/* FOOTER NOTE */}
+        <p className="text-lg text-slate-900">
+          {isPastor
+            ? "Terima kasih sudah mau membantu umat Pastor"
+            : "Mohon bersabar dalam menunggu respon Pastor"}
+        </p>
 
-                <p className="text-slate-500">
-                  Anda harus login terlebih dahulu untuk menghubungi Pastor Pendamping
-                </p>
-
-                <Link
-                  href="/register"
-                  className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#9333ea] px-6 py-3 text-white"
-                >
-                  <GraduationCap size={18} />
-                  Login / Daftar Sekarang
-                </Link>
-              </div>
-            ) : (
-              <div className="mx-auto mt-8 max-w-3xl">
-
-                <label className="text-sm font-semibold text-slate-700">
-                  Ketik pertanyaan atau pesan anda yang ingin dikirim kepada pastor pendamping:
-                </label>
-
-                <textarea
-                  rows={6}
-                  placeholder="Ketik pertanyaan atau pesan anda..."
-                  className="mt-3 w-full rounded-2xl border border-slate-300 p-4 outline-none transition focus:border-[#9333ea]"
-                />
-
-                <button className="mt-5 w-full rounded-xl bg-[#9333ea] px-6 py-4 text-lg font-semibold text-white transition hover:opacity-90">
-                  ✉ Kirim Pesan
-                </button>
-              </div>
-            )}
-          </div>
+      </div>
+    )}
+  </div>
+</div>
         </div>
       </section>
 

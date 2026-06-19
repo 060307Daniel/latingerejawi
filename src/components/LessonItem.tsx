@@ -19,6 +19,8 @@ type LessonItemProps = {
   type: "lesson" | "practice" | "quiz";
   locked?: boolean;
   href?: string;
+
+  onLockedClick?: () => void;
 };
 
 export default function LessonItem({
@@ -28,12 +30,9 @@ export default function LessonItem({
   type,
   locked = false,
   href = "#",
+   onLockedClick,
 }: LessonItemProps) {
-  const handleLocked = () => {
-    alert(
-      "Materi ini masih terkunci. Selesaikan materi sebelumnya terlebih dahulu."
-    );
-  };
+  
 
   const badgeLabel =
     type === "lesson"
@@ -44,20 +43,42 @@ export default function LessonItem({
 
   return (
     <Card
-      className={`
-        rounded-3xl
-        border
-        bg-white
-        transition
-        hover:shadow-lg
-        ${locked ? "opacity-60" : ""}
-      `}
-      onClick={() => {
-        if (locked) {
-          handleLocked();
-        }
-      }}
-    >
+  className={`
+    rounded-3xl
+    border
+    bg-white
+    transition
+    hover:shadow-lg
+    ${locked ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}
+  `}
+
+  onClick={(e) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  console.log("BUTTON CLICKED", { locked });
+
+  if (locked) {
+    console.log("LOCKED CLICK TRIGGERED");
+    onLockedClick?.();
+    return;
+  }
+
+  if (href) {
+    window.location.href = href;
+  }
+}}
+  /*onClick={() => {
+  if (locked) {
+    onLockedClick?.();
+    return;
+  }
+
+  if (href && href !== "#") {
+    window.location.href = href;
+  }
+}}*/
+>
       <CardContent className="flex flex-col gap-6 p-8 lg:flex-row lg:items-center lg:justify-between">
 
         <div className="flex items-center gap-6">
@@ -91,7 +112,7 @@ export default function LessonItem({
                   ${
                     locked
                       ? "text-slate-500"
-                      : "text-red-600"
+                      : "text-black-600"
                   }
                 `}
               >
@@ -123,10 +144,11 @@ export default function LessonItem({
           </Badge>
         ) : (
           <Button
-            asChild
-            className="px-6 py-6 text-lg font-semibold"
-          >
-            <Link href={href}>
+  asChild
+  disabled={locked}
+  className="px-6 py-6 text-lg font-semibold"
+>
+  <Link href={locked ? "#" : href}>
               <Play size={18} />
               Mulai
             </Link>

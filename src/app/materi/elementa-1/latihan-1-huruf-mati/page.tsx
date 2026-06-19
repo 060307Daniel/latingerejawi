@@ -38,6 +38,8 @@ import {
   Label,
 } from "@/components/ui/label";
 
+import { trackLesson } from "@/lib/progress/track-lesson";
+
 export default function LatihanHurufMatiPage() {
 
   const questionBank = [
@@ -300,6 +302,17 @@ const [timeLeft, setTimeLeft] =
 const [mounted, setMounted] =
   useState(false);
 
+const [progressSaved, setProgressSaved] =
+  useState(false);
+
+
+const [showWarning, setShowWarning] = useState(false);
+const [showQuizPopup, setShowQuizPopup] = useState(false);
+
+const handleQuizClick = () => {
+  setShowWarning(true);
+};
+
 /* ===================================
    LOAD SOAL ACAK
 =================================== */
@@ -382,23 +395,64 @@ useEffect(() => {
    LOADING SCREEN
 =================================== */
 
+useEffect(() => {
+
+  if (!submitted) return;
+
+  if (progressSaved) return;
+
+  const saveProgress = async () => {
+
+    try {
+
+      const user = JSON.parse(
+        localStorage.getItem("user") || "{}"
+      );
+
+      if (!user?.id) return;
+
+      await trackLesson({
+        userId: user.id,
+        moduleSlug: "elementa-1",
+        lessonSlug: "latihan-1-huruf-mati",
+      });
+
+      setProgressSaved(true);
+
+      console.log(
+        "✅ Progress latihan tersimpan"
+      );
+
+    } catch (err) {
+
+      console.log(
+        "❌ Gagal simpan progress",
+        err
+      );
+
+    }
+
+  };
+
+  saveProgress();
+
+}, [
+  submitted,
+  progressSaved,
+]);
+
+
 if (
   !mounted ||
   questions.length === 0
 ) {
-
   return (
-
     <main className="min-h-screen flex items-center justify-center">
-
       <p className="text-slate-500">
         Memuat latihan...
       </p>
-
     </main>
-
   );
-
 }
 
 const currentQ =
@@ -488,6 +542,7 @@ const weakTopics =
         )
     )
   );
+  
 
   return (
 
@@ -684,8 +739,8 @@ const weakTopics =
 
                 ${
                   isSelected
-                    ? "border-red-500 bg-red-50"
-                    : "border-slate-200 hover:border-red-300"
+                    ? "border-yellow-500 bg-yellow-50"
+                    : "border-slate-200 hover:border-yellow-300"
                 }
               `}
             >
@@ -809,138 +864,6 @@ const weakTopics =
 
               </div>
 
-              {/*<div className="mt-8 rounded-3xl bg-slate-100 p-8">
-
-  <h3 className="text-3xl font-black text-[#0d1333]">
-
-    Objektif Pembelajaran
-
-  </h3>
-
-  <p className="mt-3 text-lg text-slate-600">
-
-    Berikut adalah capaian pembelajaran berdasarkan
-    hasil latihan yang telah Anda kerjakan.
-
-  </p>
-
-  <div className="mt-8 space-y-4">
-
-    <div className="rounded-2xl bg-white p-5 shadow-sm">
-
-      <div className="flex items-center justify-between">
-
-        <p className="font-bold text-[#0d1333]">
-
-          Mengidentifikasi cara baca huruf C
-
-        </p>
-
-        {weakTopics.includes("Huruf C") ? (
-
-          <span className="font-bold text-red-600">
-            🔴 Perlu Ditinjau
-          </span>
-
-        ) : (
-
-          <span className="font-bold text-green-600">
-            🟢 Tercapai
-          </span>
-
-        )}
-
-      </div>
-
-    </div>
-
-    <div className="rounded-2xl bg-white p-5 shadow-sm">
-
-      <div className="flex items-center justify-between">
-
-        <p className="font-bold text-[#0d1333]">
-
-          Mengidentifikasi cara baca huruf G
-
-        </p>
-
-        {weakTopics.includes("Huruf G") ? (
-
-          <span className="font-bold text-red-600">
-            🔴 Perlu Ditinjau
-          </span>
-
-        ) : (
-
-          <span className="font-bold text-green-600">
-            🟢 Tercapai
-          </span>
-
-        )}
-
-      </div>
-
-    </div>
-
-    <div className="rounded-2xl bg-white p-5 shadow-sm">
-
-      <div className="flex items-center justify-between">
-
-        <p className="font-bold text-[#0d1333]">
-
-          Mengidentifikasi cara baca huruf S
-
-        </p>
-
-        {weakTopics.includes("Huruf S") ? (
-
-          <span className="font-bold text-red-600">
-            🔴 Perlu Ditinjau
-          </span>
-
-        ) : (
-
-          <span className="font-bold text-green-600">
-            🟢 Tercapai
-          </span>
-
-        )}
-
-      </div>
-
-    </div>
-
-    <div className="rounded-2xl bg-white p-5 shadow-sm">
-
-      <div className="flex items-center justify-between">
-
-        <p className="font-bold text-[#0d1333]">
-
-          Mengidentifikasi cara baca huruf TI
-
-        </p>
-
-        {weakTopics.includes("Huruf TI") ? (
-
-          <span className="font-bold text-red-600">
-            🔴 Perlu Ditinjau
-          </span>
-
-        ) : (
-
-          <span className="font-bold text-green-600">
-            🟢 Tercapai
-          </span>
-
-        )}
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>*/}
               <Card className="mt-8 rounded-3xl border-0 shadow-lg">
 
   <CardContent className="p-8">
@@ -951,7 +874,7 @@ const weakTopics =
 
     </h3>
 
-    <p className="mt-3 text-lg text-slate-600">
+    <p className="mt-3 text-xl text-slate-600">
 
       Berikut adalah capaian pembelajaran berdasarkan
       hasil latihan yang telah Anda kerjakan.
@@ -966,7 +889,7 @@ const weakTopics =
 
         <div className="flex items-center justify-between">
 
-          <p className="font-bold text-[#0d1333]">
+          <p className="text-xl font-bold text-[#0d1333]">
 
             Mengidentifikasi cara baca huruf C
 
@@ -990,7 +913,7 @@ const weakTopics =
 
         {weakTopics.includes("Huruf C") && (
 
-          <p className="mt-3 text-slate-600">
+          <p className="text-lg mt-3 text-slate-600">
 
             Huruf C dibaca "ce" apabila
             diikuti huruf ae, oe, e, atau i.
@@ -1007,7 +930,7 @@ const weakTopics =
 
         <div className="flex items-center justify-between">
 
-          <p className="font-bold text-[#0d1333]">
+          <p className="text-xl font-bold text-[#0d1333]">
 
             Mengidentifikasi cara baca huruf G
 
@@ -1031,7 +954,7 @@ const weakTopics =
 
         {weakTopics.includes("Huruf G") && (
 
-          <p className="mt-3 text-slate-600">
+          <p className="text-base mt-3 text-slate-600">
 
             Gabungan GN dibaca seperti
             bunyi "ny".
@@ -1048,7 +971,7 @@ const weakTopics =
 
         <div className="flex items-center justify-between">
 
-          <p className="font-bold text-[#0d1333]">
+          <p className="text-xl font-bold text-[#0d1333]">
 
             Mengidentifikasi cara baca huruf S
 
@@ -1072,7 +995,7 @@ const weakTopics =
 
         {weakTopics.includes("Huruf S") && (
 
-          <p className="mt-3 text-slate-600">
+          <p className="text-base mt-3 text-slate-600">
 
             SC yang diikuti huruf e atau i
             dibaca "sy".
@@ -1089,7 +1012,7 @@ const weakTopics =
 
         <div className="flex items-center justify-between">
 
-          <p className="font-bold text-[#0d1333]">
+          <p className="text-xl font-bold text-[#0d1333]">
 
             Mengidentifikasi cara baca huruf TI
 
@@ -1113,7 +1036,7 @@ const weakTopics =
 
         {weakTopics.includes("Huruf TI") && (
 
-          <p className="mt-3 text-slate-600">
+          <p className="text-base mt-3 text-slate-600">
 
             TI yang diikuti vokal dibaca
             "tsi", kecuali jika didahului
@@ -1133,75 +1056,75 @@ const weakTopics =
 
               <div className="mt-8 rounded-2xl border border-yellow-200 bg-yellow-50 p-6">
 
-                <h3 className="text-lg font-bold text-yellow-800">
-                  💡 Saran Belajar
+                <h3 className="text-xl font-bold text-yellow-800">
+                  💡 Doa Singkat Mohon Bimbingan Roh Kudus
                 </h3>
 
-                <p className="mt-3 leading-8 text-slate-700">
+                <p className="text-lg mt-3 leading-8 text-slate-800">
 
-                  Ulangi latihan beberapa
-                  kali untuk memperoleh
-                  kombinasi soal yang
-                  berbeda.
-
-                </p>
-
-                <p className="mt-3 leading-8 text-slate-700">
-
-                  Semakin sering berlatih,
-                  semakin mudah mengenali
-                  pola pelafalan Latin
-                  Gerejawi.
+                 "Datanglah, ya Roh Kudus, penuhi hati umat-Mu, dan nyalakanlah api cinta-Mu di dalam kami.
+                 Utuslah Roh-Mu, maka kami akan diciptakan kembali, dan Engkau akan membaharui muka bumi. Amin."
 
                 </p>
 
               </div>
 
-              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
+             <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center sm:items-center sm:gap-6">
 
-                <Button
-                  onClick={handleReset}
-                  className="
-h-16
-rounded-3xl
-px-12
-text-lg
-font-bold
-"
-                >
+  <Link href="/materi/elementa-1/pengenalan-huruf-mati-ti">
+    <Button
+      variant="outline"
+      className="
+        h-16
+        w-full
+        sm:w-auto
+        rounded-3xl
+        border border-slate-400
+        text-slate-800
+        px-12
+        text-xl
+        font-bold
+        hover:bg-slate-50
+      "
+    >
+      Kembali ke Materi
+    </Button>
+  </Link>
 
-                  <RotateCcw
-                    size={18}
-                  />
+  <Button
+    onClick={handleReset}
+    className="
+      h-16
+      w-full
+      sm:w-auto
+      rounded-3xl
+      px-12
+      text-xl
+      font-bold
+      bg-red-600 hover:bg-red-700
+    "
+  >
+    Coba Lagi
+  </Button>
 
-                  Coba Lagi
+  <Button
+    onClick={handleQuizClick}
+    className="
+      h-16
+      w-full
+      sm:w-auto
+      rounded-3xl
+      px-12
+      text-xl
+      font-bold
+      bg-[#030326] hover:bg-[#1a1a3a]
+    "
+  >
+    Quiz 1
+  </Button>
 
-                </Button>
+</div>
 
-                <Link href="/materi/elementa-1">
-
-                  <Button
-  variant="outline"
-  className="
-    h-16
-    rounded-3xl
-    px-12
-    text-xl
-    font-bold
-  "
->
-
-                    <BookOpen
-                      size={18}
-                    />
-
-                    Kembali ke Materi
-
-                  </Button>
-
-                </Link>
-
-              </div>
 
             </CardContent>
 
@@ -1210,6 +1133,56 @@ font-bold
         </section>
 
       )}
+
+      {showWarning && (
+  <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/60 px-4">
+
+    <Card className="w-full max-w-xl rounded-3xl shadow-2xl">
+      <CardContent className="p-8 text-center">
+
+        <div className="mb-4 text-6xl">⏳</div>
+
+        <h2 className="text-3xl font-bold text-[#0d1333]">
+          Siap mengikut kuis?
+        </h2>
+
+        <p className="mt-3 text-xl leading-8 text-slate-900">
+           Anda akan dibawah ke halaman informasi quiz
+        </p>
+
+        
+        <p className="text-xl leading-8 text-slate-900">
+           <strong>Latihan masih bisa dilakukan lagi jika belum siap</strong>
+        </p>
+
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+
+          <Button
+            variant="outline"
+            className="h-14 rounded-2xl px-8 text-lg"
+            onClick={() => setShowWarning(false)}
+          >
+            Kembali
+          </Button>
+
+          <Button
+            className="h-14 rounded-2xl bg-[#030326] px-8 text-lg"
+            onClick={() => {
+               window.location.href =
+                "/materi/elementa-1/persiapan-quiz-1";
+            }}
+          >
+            Lanjut ke Quiz
+          </Button>
+
+        </div>
+
+      </CardContent>
+    </Card>
+
+  </div>
+)}
+
 
       <footer className="mt-16 border-t py-10 text-center text-slate-500">
 

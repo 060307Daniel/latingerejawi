@@ -8,8 +8,19 @@ export async function POST(req: Request) {
 
     const { userId, moduleSlug, lessonSlug } = body;
 
-    const result = await prisma.userProgress.create({
-      data: {
+    const result = await prisma.userProgress.upsert({
+      where: {
+        userId_moduleSlug_lessonSlug: {
+          userId,
+          moduleSlug,
+          lessonSlug,
+        },
+      },
+      update: {
+        completed: true,
+        completedAt: new Date(),
+      },
+      create: {
         userId,
         moduleSlug,
         lessonSlug,
@@ -33,10 +44,17 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const userId = Number(searchParams.get("userId"));
+
+  const userId = searchParams.get("userId");
+
+  if (!userId) {
+    return Response.json([]);
+  }
 
   const data = await prisma.userProgress.findMany({
-    where: { userId },
+    where: {
+      userId,
+    },
   });
 
   return Response.json(data);

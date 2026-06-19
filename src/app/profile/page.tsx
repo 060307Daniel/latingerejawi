@@ -1,5 +1,9 @@
 "use client";
 
+import { transformProgress } from "@/lib/progress/transform-progress";
+import { calculateModuleProgress } from "@/lib/progress-engine";
+import { COURSE_STRUCTURE, ModuleSlug } from "@/lib/course-structure";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
@@ -19,25 +23,57 @@ import {
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  const [showLogoutModal, setShowLogoutModal] =
-    useState(false);
+  const [progressData, setProgressData] = useState<Record<string, string[]>>({});
+  const [passedQuizCount, setPassedQuizCount] = useState(0);
+
+  const fetchProgress = async (userId: string) => {
+    try {
+      const res = await fetch(`/api/progress?userId=${userId}`);
+      const progress = await res.json();
+
+      const formatted = transformProgress(progress);
+      setProgressData(formatted);
+
+      const quizCount = progress.filter((item: any) =>
+        item.lessonSlug.startsWith("quiz-")
+      ).length;
+
+      setPassedQuizCount(quizCount);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
-    const storedUser =
-      localStorage.getItem("user");
+    const storedUser = localStorage.getItem("user");
 
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsed = JSON.parse(storedUser);
+      setUser(parsed);
+
+      if (parsed?.id) {
+        fetchProgress(parsed.id);
+      }
     }
   }, []);
+
+  const totalLessons = Object.values(COURSE_STRUCTURE).flat().length;
+
+  const totalCompletedLessons = Object.values(progressData).flat().length;
+
+  const totalProgress =
+    totalLessons > 0
+      ? Math.round((totalCompletedLessons / totalLessons) * 100)
+      : 0;
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-
     window.location.href = "/";
   };
+
 
   return (
     <main className="min-h-screen bg-[#f5f7fb] pb-10">
@@ -78,18 +114,17 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* PROGRESS */}
-        <div className="mx-auto max-w-7xl px-4 pb-4 lg:px-6">
-          <div className="mb-2 flex items-center justify-between text-sm font-semibold text-slate-500">
-            <span>Progress Pembelajaran</span>
+        {/* PROGRESS 
+       <span>
+  {totalCompletedLessons} / {totalLessons} pelajaran
+</span>
 
-            <span>0 / 21 pelajaran</span>
-          </div>
-
-          <div className="h-3 w-full rounded-full bg-slate-200">
-            <div className="h-3 w-[0%] rounded-full bg-[#16233f]" />
-          </div>
-        </div>
+<div className="h-3 w-full rounded-full bg-slate-200">
+  <div
+    className="h-3 rounded-full bg-[#16233f]"
+    style={{ width: `${totalProgress}%` }}
+  />
+</div>*/}
       </header>
 
       {/* CONTENT */}
@@ -100,7 +135,7 @@ export default function ProfilePage() {
           className="flex items-center gap-3 text-lg font-semibold text-[#111827]"
         >
           <ArrowLeft size={22} />
-          Kembali ke Dashboard
+          Kembali ke Halaman Utama
         </Link>
 
         {/* TITLE */}
@@ -116,9 +151,9 @@ export default function ProfilePage() {
         </div>
 
         {/* GRID */}
-        <div className="mt-10 grid grid-cols-1 gap-6 xl:grid-cols-3">
+        <div className="mt-10 grid grid-cols-1 gap-6 xl:grid-cols-4">
           {/* LEFT */}
-          <div className="space-y-6 xl:col-span-2">
+          <div className="space-y-6 xl:col-span-3">
             {/* PROFILE CARD */}
             <div className="rounded-3xl border bg-white p-6 shadow-sm">
               <h3 className="flex items-center gap-3 text-2xl font-bold text-[#0f172a]">
@@ -210,20 +245,24 @@ export default function ProfilePage() {
               </h3>
 
               <div className="mt-8">
-                <div className="mb-3 flex items-center justify-between text-lg font-semibold">
-                  <span>Pelajaran Selesai</span>
+  <div className="flex justify-between">
+    <span>Pelajaran Selesai</span>
+    <span>
+      {totalCompletedLessons} / {totalLessons}
+    </span>
+  </div>
 
-                  <span>0 / 21</span>
-                </div>
+  <div className="h-4 w-full rounded-full bg-slate-200 mt-3">
+    <div
+      className="h-4 rounded-full bg-[#dc2626]"
+      style={{ width: `${totalProgress}%` }}
+    />
+  </div>
 
-                <div className="h-4 w-full rounded-full bg-slate-200">
-                  <div className="h-4 w-[0%] rounded-full bg-[#16233f]" />
-                </div>
-
-                <p className="mt-3 text-slate-400">
-                  0.0% dari total pembelajaran
-                </p>
-              </div>
+  <p className="mt-3 text-slate-400">
+    {totalProgress}% dari total pembelajaran
+  </p>
+</div>
 
               {/* STATS */}
               <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -234,9 +273,9 @@ export default function ProfilePage() {
                     size={30}
                   />
 
-                  <h4 className="mt-3 text-4xl font-bold text-[#0f172a]">
-                    0
-                  </h4>
+                <h4 className="mt-3 text-4xl font-bold text-[#0f172a]">
+  {totalCompletedLessons}
+</h4>
 
                   <p className="mt-2 text-lg text-slate-500">
                     Pelajaran
@@ -250,9 +289,9 @@ export default function ProfilePage() {
                     size={30}
                   />
 
-                  <h4 className="mt-3 text-4xl font-bold text-[#0f172a]">
-                    0
-                  </h4>
+              <h4 className="mt-3 text-4xl font-bold text-[#0f172a]">
+  {passedQuizCount}
+</h4>
 
                   <p className="mt-2 text-lg text-slate-500">
                     Kuis Selesai
@@ -266,57 +305,73 @@ export default function ProfilePage() {
                     size={30}
                   />
 
-                  <h4 className="mt-3 text-4xl font-bold text-[#0f172a]">
-                    0%
-                  </h4>
-
-                  <p className="mt-2 text-lg text-slate-500">
-                    Nilai Rata-rata
+             <h4 className="mt-3 text-4xl font-bold text-[#0f172a]">
+  {totalProgress}%
+</h4>
+ <p className="mt-2 text-lg text-slate-500">
+                    Progress Anda
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* RIGHT */}
-          <div className="space-y-6">
-            {/* ACHIEVEMENT */}
-            <div className="rounded-3xl border bg-white p-6 shadow-sm">
-              <h3 className="text-2xl font-bold text-[#0f172a]">
-                Pencapaian
-              </h3>
+         {/* RIGHT */}
+<div className="space-y-6">
 
-              <div className="flex flex-col items-center py-16 text-center">
-                <Award
-                  className="text-slate-300"
-                  size={70}
-                />
+  {/* PENCAPAIAN + BUTTONS */}
+  <div className="rounded-3xl border bg-white p-6 shadow-sm">
+    <h3 className="text-center text-2xl font-bold text-[#0f172a]">
+      SERTIFIKAT PENYELESAIAN
+    </h3>
+    
+      <p className="mt-3  text-center text-lg text-slate-900">
+        Tombol sertifikat akan muncul jika semua kursus telah selesai
+      </p>
 
-                <p className="mt-6 text-xl text-slate-400">
-                  Belum ada pencapaian.
-                </p>
+      {/* BUTTON DOWNLOAD SERTIFIKAT (hanya jika 100%) */}
+      {totalProgress === 100 && (
+        <button
+          onClick={async () => {
+            const token = localStorage.getItem("token");
+            if (!token) return alert("Silakan login");
 
-                <p className="text-xl text-slate-400">
-                  Mulai belajar sekarang!
-                </p>
-              </div>
-            </div>
+            const res = await fetch("/api/certificate/me", {
+              headers: { Authorization: `Bearer ${token}` },
+            });
 
-            {/* AKTIVITAS */}
-            <div className="rounded-3xl border bg-white p-6 shadow-sm">
-              <h3 className="text-2xl font-bold text-[#0f172a]">
-                Aktivitas Terkini
-              </h3>
+            if (!res.ok) return alert("Gagal mengambil sertifikat");
 
-              <p className="mt-8 text-lg text-slate-400">
-                Belum ada aktivitas pembelajaran
-              </p>
+            const userData = await res.json();
 
-              <button className="mt-8 h-14 w-full rounded-2xl border text-lg font-semibold transition hover:bg-slate-50">
-                Lanjutkan Belajar
-              </button>
-            </div>
-          </div>
+            if (!userData?.name) {
+              return alert("Nama user tidak ditemukan");
+            }
+
+            const { generateCertificate } = await import(
+              "@/lib/generate-certificate"
+            );
+
+            await generateCertificate(
+              userData.name,
+              userData.certificateIssuedAt
+            );
+          }}
+          className="mt-6 h-12 w-full rounded-2xl bg-yellow-500 font-bold text-black hover:bg-yellow-600 transition"
+        >
+          🏆 Download Sertifikat
+        </button>
+      )}
+
+      {/* BUTTON LANJUT BELAJAR */}
+      <button
+        className="mt-4 h-12 w-full rounded-2xl border text-lg font-semibold transition hover:bg-slate-50"
+      >
+        Lanjutkan Belajar
+      </button>
+    </div>
+
+</div>
         </div>
       </section>
 

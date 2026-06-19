@@ -120,29 +120,14 @@ useEffect(() => {
     .padStart(2, "0")}`;
 };
 
-const handleNext = async () => {
+const handleNext = () => {
   if (timeLeft > 0) {
     setShowWarning(true);
     return;
   }
 
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-  if (!user?.id) return;
-
-  try {
-    await trackLesson({
-      userId: user.id,
-      moduleSlug: "elementa-1",
-      lessonSlug: "huruf-s",
-    });
-
-    router.push(
-      "/materi/elementa-1/pengenalan-huruf-mati-ti"
-    );
-  } catch (err) {
-    console.log(err);
-  }
+  window.location.href =
+    "/materi/elementa-1/pengenalan-huruf-mati-ti";
 };
 
 useEffect(() => {
@@ -302,7 +287,7 @@ Silakan coba lagi nanti.`
         <Card className="mt-8 border-blue-200 bg-blue-50">
           <CardContent className="p-7 lg:p-10">
             <p className="text-xl lg:text-3xl leading-[44px] lg:leading-[52px] text-slate-700">
-              Huruf mati adalah huruf yang tidak memiliki bunyi vokal. Dalam bahasa Latin Gerejawi, huruf mati disebut konsonan. Huruf-huruf tersebut yaitu C, G, S, dan TI. Cara bacanya mirip bahasa Indonesia sehingga mudah dipelajari. Namun ada beberapa aturan penting yang berlaku.
+              Huruf mati adalah huruf yang tidak memiliki bunyi vokal atau yang sering disebut sebagai konsonan. Dalam bahasa Latin Gerejawi, <strong>huruf-huruf tersebut meliputi C, G, S, dan T.</strong> Cara bacanya mirip bahasa Indonesia sehingga mudah dipelajari. Namun ada beberapa aturan penting yang berlaku.
             </p>
           </CardContent>
         </Card>
@@ -508,7 +493,7 @@ Silakan coba lagi nanti.`
         {/* AUDIO */}
         <div className="mt-12">
           <p className="text-xl lg:text-2xl leading-[44px] text-slate-700">
-            Berikut adalah audio pelafalan. Tekan ikon volume untuk mendengar.
+            Berikut adalah audio pelafalannya.<strong> Silahkan klik ikon volume untuk mendengarkan.</strong>
           </p>
         </div>
 
@@ -555,7 +540,7 @@ Silakan coba lagi nanti.`
   ))}
 </div>
 
-<div className="mt-6">
+{/*<div className="mt-6">
   <button
     onClick={() => {
   localStorage.setItem(TIMER_KEY, "90");
@@ -604,19 +589,19 @@ Silakan coba lagi nanti.`
           ⏳
         </div>
 
-        <h2 className="text-3xl font-bold text-[#0d1333]">
+        <h2 className="mt-4 text-3xl font-bold text-[#0d1333]">
           Waktu Belajar Belum Selesai
         </h2>
 
-        <p className="mt-5 text-xl font-bold leading-8 text-slate-700">
+        {/*<p className="mt-5 text-xl font-bold leading-8 text-slate-700">
           Waktu belajar masih tersisa
-        </p>
+        </p>*/}
 
         <p className="mt-2 text-4xl font-bold text-red-600">
           {formatTime(timeLeft)}
         </p>
 
-        <p className="mt-5 text-lg font-bold leading-8 text-slate-700">
+        <p className="mt-5 text-lg font-bold leading-8 text-slate-900">
           Anda hanya dapat melanjutkan ke materi berikutnya
           setelah waktu belajar selesai.
         </p>

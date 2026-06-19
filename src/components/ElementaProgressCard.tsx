@@ -7,31 +7,53 @@ type ElementaProgressCardProps = {
   totalLessons: number;
   completedLessons: number;
   progress: number;
+  completed?: boolean;
 };
 
 export default function ElementaProgressCard({
   totalLessons,
   completedLessons,
   progress,
+  completed = false,
 }: ElementaProgressCardProps) {
   return (
-    <Card className="overflow-hidden border-0 bg-red-600 text-white shadow-lg">
+    <Card
+  className={`overflow-hidden border-0 shadow-lg ${
+    completed
+  ? "border border-yellow-300 bg-gradient-to-r from-yellow-50 via-amber-50 to-yellow-100 text-yellow-800"
+      : "bg-red-600 text-white"
+  }`}
+>
   <CardContent className="p-6 lg:p-8">
 
     {/* HEADER */}
     <div className="flex items-start gap-4">
 
-      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white/10">
+      <div
+  className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-xl ${
+    completed
+  ? "bg-yellow-200/40"
+      : "bg-white/10"
+  }`}
+>
         <BookOpen size={36} />
       </div>
 
       <div className="min-w-0">
 
         <h1 className="text-3xl font-bold lg:text-5xl">
-          Elementa 1
+          Elementa 
         </h1>
 
-        <p className="mt-2 text-sm font-semibold uppercase text-white/95 lg:text-2xl">
+        
+
+        <p
+  className={`mt-2 text-sm font-semibold uppercase lg:text-2xl ${
+    completed
+  ? "text-yellow-700"
+      : "text-white/95"
+  }`}
+>
           Pengenalan Huruf Mati dan Huruf Hidup dalam Bahasa Latin Gerejawi
         </p>
 
@@ -42,7 +64,13 @@ export default function ElementaProgressCard({
             Tujuan Pembelajaran:
           </h2>
 
-          <p className="mt-2 max-w-5xl text-base leading-8 text-white/95 lg:text-xl lg:leading-10">
+          <p
+  className={`mt-2 max-w-5xl text-base leading-8 lg:text-xl lg:leading-10 ${
+    completed
+  ? "text-yellow-700"
+      : "text-white/95"
+  }`}
+>
             Setelah mempelajari modul ini, umat beriman
             mampu mengidentifikasi aturan-aturan pelafalan
             konsonan dan vokal dalam bahasa Latin Gerejawi
@@ -59,32 +87,64 @@ export default function ElementaProgressCard({
     {/* STATISTIK */}
     <div className="mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
 
-      <div className="rounded-2xl bg-white/10 p-5">
+      <div
+  className={`rounded-2xl p-5 ${
+    completed
+  ? "bg-white/50"
+      : "bg-white/10"
+  }`}
+>
         <h2 className="text-4xl font-bold">
           {totalLessons}
         </h2>
 
-        <p className="mt-2 text-white/90">
+        <p
+  className={`mt-2 ${
+    completed
+      ? "text-yellow-700"
+      : "text-white/90"
+  }`}
+>
           Total Pelajaran
         </p>
       </div>
 
-      <div className="rounded-2xl bg-white/10 p-5">
+      <div className={`rounded-2xl p-5 ${
+  completed
+  ? "bg-white/50"
+    : "bg-white/10"
+}`}>
         <h2 className="text-4xl font-bold">
           {completedLessons}
         </h2>
 
-        <p className="mt-2 text-white/90">
+        <p
+  className={`mt-2 ${
+    completed
+      ? "text-yellow-700"
+      : "text-white/90"
+  }`}
+>
           Selesai
         </p>
       </div>
 
-      <div className="rounded-2xl bg-white/10 p-5">
+      <div className={`rounded-2xl p-5 ${
+  completed
+  ? "bg-white/50"
+    : "bg-white/10"
+}`}>
         <h2 className="text-4xl font-bold">
           {progress}%
         </h2>
 
-        <p className="mt-2 text-white/90">
+        <p
+  className={`mt-2 ${
+    completed
+      ? "text-yellow-700"
+      : "text-white/90"
+  }`}
+>
           Progress
         </p>
       </div>
@@ -92,14 +152,24 @@ export default function ElementaProgressCard({
     </div>
 
     {/* PROGRESS BAR */}
-    <div className="mt-8 h-4 w-full overflow-hidden rounded-full bg-white/20">
+    <div
+  className={`mt-8 h-4 w-full overflow-hidden rounded-full ${
+    completed
+  ? "bg-yellow-600"
+      : "bg-white/20"
+  }`}
+>
 
       <div
-        className="h-full rounded-full bg-white transition-all duration-500"
-        style={{
-          width: `${progress}%`,
-        }}
-      />
+  className={`h-full rounded-full transition-all duration-500 ${
+    completed
+  ? "text-yellow-700"
+      : "bg-white"
+  }`}
+  style={{
+    width: `${progress}%`,
+  }}
+/>
 
     </div>
 

@@ -1,17 +1,16 @@
-import { COURSE_STRUCTURE } from "./course-structure";
+import {
+  COURSE_STRUCTURE,
+  ModuleSlug,
+} from "./course-structure";
 
-/**
- * Ambil semua lesson dalam module
- */
-export function getModuleLessons(moduleSlug: string) {
-  return COURSE_STRUCTURE[moduleSlug] || [];
+export function getModuleLessons(
+  moduleSlug: ModuleSlug
+): readonly string[] {
+  return COURSE_STRUCTURE[moduleSlug];
 }
 
-/**
- * Hitung progress module (%)
- */
 export function calculateModuleProgress(
-  moduleSlug: string,
+  moduleSlug: ModuleSlug,
   completedLessons: string[]
 ) {
   const lessons = getModuleLessons(moduleSlug);
@@ -22,12 +21,11 @@ export function calculateModuleProgress(
     completedLessons.includes(lesson)
   ).length;
 
-  return Math.round((completed / lessons.length) * 100);
+  return Math.round(
+    (completed / lessons.length) * 100
+  );
 }
 
-/**
- * Cek apakah lesson sudah selesai
- */
 export function isLessonCompleted(
   lessonSlug: string,
   completedLessons: string[]
@@ -35,13 +33,11 @@ export function isLessonCompleted(
   return completedLessons.includes(lessonSlug);
 }
 
-/**
- * Ambil index progress (untuk "Langkah x dari y")
- */
 export function getLessonIndex(
-  moduleSlug: string,
+  moduleSlug: ModuleSlug,
   lessonSlug: string
 ) {
   const lessons = getModuleLessons(moduleSlug);
+
   return lessons.indexOf(lessonSlug) + 1;
 }
