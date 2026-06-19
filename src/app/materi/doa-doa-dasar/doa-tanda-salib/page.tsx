@@ -487,7 +487,7 @@ Silakan coba lagi nanti.`
   ))}
 </div>
 
-<div className="mt-6">
+{/*<div className="mt-6">
   <button
     onClick={() => {
   localStorage.setItem(TIMER_KEY, "90");
