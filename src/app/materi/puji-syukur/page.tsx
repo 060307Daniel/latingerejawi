@@ -251,7 +251,7 @@ const handleLessonClick = (index: number) => {
   <LessonItem
   number={1}
   title="Lagu Haec Dies"
-  duration="15 menit"
+  duration="2 menit"
   type="lesson"
   href="/materi/puji-syukur/haec-dies"
   locked={!isUnlocked(0)}
@@ -261,7 +261,7 @@ const handleLessonClick = (index: number) => {
 <LessonItem
   number={2}
   title="Latihan 1: Haec Dies"
-  duration="10 menit"
+  duration="5 menit"
   type="practice"
   href="/materi/puji-syukur/persiapan-latihan-1"
   locked={!isUnlocked(1)}
@@ -271,7 +271,7 @@ const handleLessonClick = (index: number) => {
 <LessonItem
   number={3}
   title="Quiz 1: Haec Dies"
-  duration="15 menit"
+  duration="10 menit"
   type="quiz"
   href="/materi/puji-syukur/persiapan-quiz-1"
   locked={!isUnlocked(2)}

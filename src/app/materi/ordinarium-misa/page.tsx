@@ -251,7 +251,7 @@ const handleLessonClick = (index: number) => {
   <LessonItem
   number={1}
   title="Ordinarium Agnus Dei"
-  duration="15 menit"
+  duration="2 menit"
   type="lesson"
   href="/materi/ordinarium-misa/agnus-dei"
   locked={!isUnlocked(0)}
@@ -261,7 +261,7 @@ const handleLessonClick = (index: number) => {
 <LessonItem
   number={2}
   title="Latihan 1: Agnus Dei"
-  duration="10 menit"
+  duration="5 menit"
   type="practice"
   href="/materi/ordinarium-misa/persiapan-latihan-1"
   locked={!isUnlocked(1)}
@@ -271,7 +271,7 @@ const handleLessonClick = (index: number) => {
 <LessonItem
   number={3}
   title="Quiz 1: Agnus Dei"
-  duration="15 menit"
+  duration="10 menit"
   type="quiz"
   href="/materi/ordinarium-misa/persiapan-quiz-1"
   locked={!isUnlocked(2)}

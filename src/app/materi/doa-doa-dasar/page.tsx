@@ -273,7 +273,7 @@ const handleLessonClick = (index: number) => {
   <LessonItem
   number={1}
   title="Doa Tanda Salib"
-  duration="90 Detik"
+  duration="2 Menit"
   type="lesson"
   href="/materi/doa-doa-dasar/doa-tanda-salib"
   locked={!isUnlocked(0)}
@@ -293,7 +293,7 @@ const handleLessonClick = (index: number) => {
 <LessonItem
   number={3}
   title="Quiz 1: Tanda Salib"
-  duration="15 menit"
+  duration="10 menit"
   type="quiz"
   href="/materi/doa-doa-dasar/persiapan-quiz-1"
   locked={!isUnlocked(2)}
@@ -303,7 +303,7 @@ const handleLessonClick = (index: number) => {
 <LessonItem
   number={4}
   title="Doa Bapa Kami"
-  duration="15 menit"
+  duration="2 menit"
   type="lesson"
   href="/materi/doa-doa-dasar/doa-bapa-kami"
   locked={!isUnlocked(3)}
@@ -323,7 +323,7 @@ const handleLessonClick = (index: number) => {
 <LessonItem
   number={6}
   title="Quiz 2: Bapa Kami"
-  duration="15 menit"
+  duration="10 menit"
   type="quiz"
   href="/materi/doa-doa-dasar/persiapan-quiz-2"
   locked={!isUnlocked(5)}

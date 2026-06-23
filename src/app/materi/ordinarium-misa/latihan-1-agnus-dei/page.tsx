@@ -452,7 +452,10 @@ export default function LatihanTandaSalib() {
 
 
     const [answers, setAnswers] =
-        useState<Record<number, string>>({});
+  useState<Record<number, string>>({});
+
+const [speechAnswers, setSpeechAnswers] =
+  useState<Record<number, boolean>>({});
 
     const [submitted, setSubmitted] =
         useState(false);
@@ -540,6 +543,11 @@ export default function LatihanTandaSalib() {
             else if (score >= 0.65) result = "almost";
 
             setSpeechResult(result);
+
+            setSpeechAnswers((prev) => ({
+  ...prev,
+  [currentQ.id]: result === "correct",
+}));
 
             setAnswers((prev) => ({
                 ...prev,
@@ -759,6 +767,8 @@ export default function LatihanTandaSalib() {
 
         setAnswers({});
 
+        setSpeechAnswers({});
+
         setSubmitted(false);
 
         setCurrentQuestion(0);
@@ -774,53 +784,80 @@ export default function LatihanTandaSalib() {
 
     };
 
-    /* ===================================
-       HASIL
-    =================================== */
+   /* ===================================
+   HASIL
+=================================== */
 
-    const correctCount =
-        questions.filter((q) => {
+const isCorrect = (q: any) => {
 
-            return (
-                Number(
-                    answers[q.id]
-                ) === q.answer
-            );
-
-        }).length;
-
-    const wrongCount =
-        questions.length -
-        correctCount;
-
-    const weakTopics =
-        Array.from(
-            new Set(
-                questions
-                    .filter(
-                        (q) =>
-                            Number(
-                                answers[q.id]
-                            ) !== q.answer
-                    )
-                    .map(
-                        (q) => q.topic
-                    )
-            )
-        );
-
-    const weakCategories = Array.from(
-        new Set(
-            questions
-                .filter(q => Number(answers[q.id]) !== q.answer)
-                .map(q => {
-                    if (q.id <= 4) return "C1";
-                    if (q.id <= 8) return "C2";
-                    return "C3";
-                })
-        )
+  // soal pilihan ganda
+  if (q.type === "multiple") {
+    return (
+      Number(
+        answers[q.id]
+      ) === q.answer
     );
+  }
 
+  // soal pelafalan
+  return (
+    speechAnswers[q.id] ??
+    false
+  );
+
+};
+
+const correctCount =
+  questions.filter(
+    q => isCorrect(q)
+  ).length;
+
+const wrongCount =
+  questions.length -
+  correctCount;
+
+const weakTopics =
+  Array.from(
+    new Set(
+      questions
+        .filter(
+          q => !isCorrect(q)
+        )
+        .map(
+          q => q.topic
+        )
+    )
+  );
+
+const weakCategories =
+  Array.from(
+    new Set(
+      questions
+        .filter(
+          q => !isCorrect(q)
+        )
+        .map(q => {
+
+          // C1 = pelafalan
+          if (
+            q.type === "speech"
+          ) {
+            return "C1";
+          }
+
+          // C2 = soal 5–8
+          if (
+            q.id <= 8
+          ) {
+            return "C2";
+          }
+
+          // C3 = sisanya
+          return "C3";
+
+        })
+    )
+  );
     return (
 
         <main className="min-h-screen bg-[#f5f7fb]">
@@ -831,7 +868,7 @@ export default function LatihanTandaSalib() {
 
                     <div className="mb-10 flex items-center gap-4">
 
-                        <Link href="/materi/doa-doa-dasar">
+                        <Link href="/materi/ordinarium-misa">
 
                             <Button
                                 variant="outline"
@@ -1158,7 +1195,7 @@ export default function LatihanTandaSalib() {
                                         <div className="rounded-2xl bg-slate-50 p-5">
                                             <div className="flex items-center justify-between">
                                                 <p className="font-bold text-[#0d1333]">
-                                                    Kemampuan Pelafalan Doa Tanda Salib
+                                                    Kemampuan Pelafalan Ordinarium Agnus Dei
                                                 </p>
 
                                                 {weakCategories.includes("C1") ? (
@@ -1174,7 +1211,7 @@ export default function LatihanTandaSalib() {
 
                                             {weakCategories.includes("C1") && (
                                                 <p className="mt-3 text-slate-800">
-                                                    Masih perlu melatih pelafalan doa Tanda Salib dalam bahasa Latin dengan pengucapan yang jelas dan benar.
+                                                    Masih perlu melatih pelafalan Ordinarium Agnus Dei dalam bahasa Latin dengan pengucapan yang jelas dan benar.
                                                 </p>
                                             )}
                                         </div>
@@ -1199,7 +1236,7 @@ export default function LatihanTandaSalib() {
 
                                             {weakCategories.includes("C2") && (
                                                 <p className="mt-3 text-slate-800">
-                                                    Masih perlu meningkatkan pemahaman arti kata dalam doa Tanda Salib seperti Patris, Filii, dan Spiritus Sancti.
+                                                    Masih perlu meningkatkan pemahaman arti kata dalam Ordinarium Agnus Dei seperti Patris, Filii, dan Spiritus Sancti.
                                                 </p>
                                             )}
                                         </div>
@@ -1208,7 +1245,7 @@ export default function LatihanTandaSalib() {
                                         <div className="rounded-2xl bg-slate-50 p-5">
                                             <div className="flex items-center justify-between">
                                                 <p className="font-bold text-[#0d1333]">
-                                                    Penerapan Doa Tanda Salib
+                                                    Penerapan Ordinarium Agnus Dei
                                                 </p>
 
                                                 {weakCategories.includes("C3") ? (
@@ -1224,7 +1261,7 @@ export default function LatihanTandaSalib() {
 
                                             {weakCategories.includes("C3") && (
                                                 <p className="mt-3 text-slate-800">
-                                                    Masih perlu memahami dan menerapkan urutan doa Tanda Salib dengan benar dalam praktik.
+                                                    Masih perlu memahami dan menerapkan urutan Ordinarium Agnus Dei dengan benar dalam praktik.
                                                 </p>
                                             )}
                                         </div>
@@ -1342,7 +1379,7 @@ export default function LatihanTandaSalib() {
                             </p>
 
                             <p className="mt-5 text-2xl text-slate-900">
-                                Anda akan melanjutkan ke <strong>Quiz Tanda Salib</strong>.
+                                Anda akan melanjutkan ke <strong>Quiz Agnus Dei</strong>.
                             </p>
 
 
@@ -1385,12 +1422,12 @@ export default function LatihanTandaSalib() {
 
                             {/* TITLE */}
                             <h2 className="text-2xl sm:text-3xl font-black text-[#0d1333]">
-                                Quiz 1: Tanda Salib
+                                Quiz 1: Agnus Dei
                             </h2>
 
                             {/* DESCRIPTION */}
                             <p className="mt-3 text-sm sm:text-lg text-slate-900 leading-7">
-                                Anda akan memulai quiz dengan materi <strong>"Doa Tanda Salib"</strong>
+                                Anda akan memulai quiz dengan materi <strong>"Ordinarium Agnus Dei"</strong>
                             </p>
 
                             {/* SEPARATOR */}

@@ -199,7 +199,7 @@ export default function PersiapanQuiz1TandaSalibPage() {
           </p>
 
           <p className="text-2xl font-bold text-[#0d1333]">
-            15 Menit
+            10 Menit
           </p>
         </div>
 

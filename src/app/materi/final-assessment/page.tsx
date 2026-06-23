@@ -211,7 +211,7 @@ const handleLessonClick = (index: number) => {
 
       <div>
         <h2 className="text-2xl font-bold text-yellow-800">
-          Quiz Terakhir Selesai!
+          Ujian Terakhir Selesai!
         </h2>
 
         <p className="mt-1 text-yellow-700">
@@ -244,7 +244,7 @@ const handleLessonClick = (index: number) => {
 
   <LessonItem
   number={1}
-  title="Quiz Terakhir"
+  title="Ujian Terakhir"
   duration="60 menit"
   type="quiz"
   href="/materi/final-assessment/persiapan-quiz-final"

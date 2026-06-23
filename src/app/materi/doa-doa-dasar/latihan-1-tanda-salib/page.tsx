@@ -221,6 +221,9 @@ const [currentQuestion, setCurrentQuestion] =
 const [answers, setAnswers] =
   useState<Record<number, string>>({});
 
+const [speechAnswers, setSpeechAnswers] =
+  useState<Record<number, boolean>>({});
+
 const [submitted, setSubmitted] =
   useState(false);
 
@@ -308,6 +311,11 @@ recognition.start();
 
     setSpeechResult(result);
 
+    setSpeechAnswers((prev) => ({
+  ...prev,
+  [currentQ.id]: result === "correct"
+}));
+
     setAnswers((prev) => ({
       ...prev,
       [currentQ.id]: text,
@@ -325,6 +333,8 @@ recognition.start();
     setIsListening(false);
   };
 };
+
+
 
 
 /* ===================================
@@ -526,6 +536,8 @@ const handleReset = () => {
 
   setAnswers({});
 
+  setSpeechAnswers({});
+
   setSubmitted(false);
 
   setCurrentQuestion(0);
@@ -545,45 +557,47 @@ const handleReset = () => {
    HASIL
 =================================== */
 
+const isCorrect = (q: any) => {
+
+  // soal pilihan ganda
+  if (q.type === "multiple") {
+    return Number(answers[q.id]) === q.answer;
+  }
+
+  // soal pelafalan
+  return speechAnswers[q.id] ?? false;
+};
+
 const correctCount =
-  questions.filter((q) => {
-
-    return (
-      Number(
-        answers[q.id]
-      ) === q.answer
-    );
-
-  }).length;
+  questions.filter(q => isCorrect(q)).length;
 
 const wrongCount =
-  questions.length -
-  correctCount;
+  questions.length - correctCount;
 
-const weakTopics =
-  Array.from(
-    new Set(
-      questions
-        .filter(
-          (q) =>
-            Number(
-              answers[q.id]
-            ) !== q.answer
-        )
-        .map(
-          (q) => q.topic
-        )
-    )
-  );
+const weakTopics = Array.from(
+  new Set(
+    questions
+      .filter(q => !isCorrect(q))
+      .map(q => q.topic)
+  )
+);
 
 const weakCategories = Array.from(
   new Set(
     questions
-      .filter(q => Number(answers[q.id]) !== q.answer)
+      .filter(q => !isCorrect(q))
       .map(q => {
-        if (q.id <= 4) return "C1";
-        if (q.id <= 8) return "C2";
+
+        if (q.type === "speech") {
+          return "C1";
+        }
+
+        if (q.id <= 12) {
+          return "C2";
+        }
+
         return "C3";
+
       })
   )
 );

@@ -477,6 +477,9 @@ export default function LatihanHaecDies() {
     const [answers, setAnswers] =
         useState<Record<number, string>>({});
 
+    const [speechAnswers, setSpeechAnswers] =
+  useState<Record<number, boolean>>({});
+
     const [submitted, setSubmitted] =
         useState(false);
 
@@ -563,6 +566,11 @@ export default function LatihanHaecDies() {
             else if (score >= 0.65) result = "almost";
 
             setSpeechResult(result);
+
+            setSpeechAnswers((prev) => ({
+  ...prev,
+  [currentQ.id]: result === "correct",
+}));
 
             setAnswers((prev) => ({
                 ...prev,
@@ -782,6 +790,8 @@ export default function LatihanHaecDies() {
 
         setAnswers({});
 
+        setSpeechAnswers({});
+
         setSubmitted(false);
 
         setCurrentQuestion(0);
@@ -798,51 +808,79 @@ export default function LatihanHaecDies() {
     };
 
     /* ===================================
-       HASIL
-    =================================== */
+   HASIL
+=================================== */
 
-    const correctCount =
-        questions.filter((q) => {
+const isCorrect = (q: any) => {
 
-            return (
-                Number(
-                    answers[q.id]
-                ) === q.answer
-            );
-
-        }).length;
-
-    const wrongCount =
-        questions.length -
-        correctCount;
-
-    const weakTopics =
-        Array.from(
-            new Set(
-                questions
-                    .filter(
-                        (q) =>
-                            Number(
-                                answers[q.id]
-                            ) !== q.answer
-                    )
-                    .map(
-                        (q) => q.topic
-                    )
-            )
-        );
-
-    const weakCategories = Array.from(
-        new Set(
-            questions
-                .filter(q => Number(answers[q.id]) !== q.answer)
-                .map(q => {
-                    if (q.id <= 4) return "C1";
-                    if (q.id <= 8) return "C2";
-                    return "C3";
-                })
-        )
+  // soal pilihan ganda
+  if (q.type === "multiple") {
+    return (
+      Number(
+        answers[q.id]
+      ) === q.answer
     );
+  }
+
+  // soal pelafalan
+  return (
+    speechAnswers[q.id] ??
+    false
+  );
+
+};
+
+const correctCount =
+  questions.filter(
+    q => isCorrect(q)
+  ).length;
+
+const wrongCount =
+  questions.length -
+  correctCount;
+
+const weakTopics =
+  Array.from(
+    new Set(
+      questions
+        .filter(
+          q => !isCorrect(q)
+        )
+        .map(
+          q => q.topic
+        )
+    )
+  );
+
+const weakCategories =
+  Array.from(
+    new Set(
+      questions
+        .filter(
+          q => !isCorrect(q)
+        )
+        .map(q => {
+
+          // C1 = pelafalan
+          if (
+            q.type === "speech"
+          ) {
+            return "C1";
+          }
+
+          // C2 = soal 5–8
+          if (
+            q.id <= 8
+          ) {
+            return "C2";
+          }
+
+          // C3 = sisanya
+          return "C3";
+
+        })
+    )
+  );
 
     return (
 

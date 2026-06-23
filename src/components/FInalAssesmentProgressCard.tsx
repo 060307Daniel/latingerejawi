@@ -42,7 +42,7 @@ export default function FInalAssesmentProgressCard({
       <div className="min-w-0">
 
         <h1 className="text-3xl font-bold lg:text-5xl">
-          Quiz Terakhir
+          Ujian Terakhir
         </h1>
 
         
@@ -54,7 +54,7 @@ export default function FInalAssesmentProgressCard({
       : "text-white/95"
   }`}
 >
-          Quiz Terakhir sebagai Final Assesment
+          Ujian Terakhir sebagai Final Assesment
         </p>
 
         {/* TUJUAN */}
@@ -72,7 +72,7 @@ export default function FInalAssesmentProgressCard({
   }`}
 >
             Kembali menguji semua kemampuan yang didapat dari semua modul sebelumnya untuk di test kembali 
-            dalam sebuah Quiz untuk mendapatkan sertifikat
+            dalam sebuah Ujian Terakhir untuk mendapatkan sertifikat
           </p>
 
         </div>

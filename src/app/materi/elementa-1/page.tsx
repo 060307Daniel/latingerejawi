@@ -241,7 +241,7 @@ const handleLessonClick = (index: number) => {
   <LessonItem
   number={1}
   title="Pengenalan Huruf Mati"
-  duration="15 menit"
+  duration="10 menit"
   type="lesson"
   href="/materi/elementa-1/pengenalan-huruf-mati"
   locked={!isUnlocked(0)}
@@ -251,7 +251,7 @@ const handleLessonClick = (index: number) => {
   <LessonItem
   number={2}
   title="Latihan 1: Huruf Mati"
-  duration="10 menit"
+  duration="5 menit"
   type="practice"
   href="/materi/elementa-1/persiapan-latihan-1"
   locked={!isUnlocked(1)}
@@ -261,7 +261,7 @@ const handleLessonClick = (index: number) => {
   <LessonItem
   number={3}
   title="Quiz 1: Huruf Mati"
-  duration="15 menit"
+  duration="10 menit"
   type="quiz"
   href="/materi/elementa-1/persiapan-quiz-1"
   locked={!isUnlocked(2)}
@@ -271,7 +271,7 @@ const handleLessonClick = (index: number) => {
   <LessonItem
   number={4}
   title="Pengenalan Huruf Hidup"
-  duration="15 menit"
+  duration="5 menit"
   type="lesson"
   href="/materi/elementa-1/pengenalan-huruf-hidup"
   locked={!isUnlocked(3)}
@@ -281,7 +281,7 @@ const handleLessonClick = (index: number) => {
   <LessonItem
   number={5}
   title="Latihan 2: Huruf Hidup"
-  duration="10 menit"
+  duration="5 menit"
   type="practice"
   href="/materi/elementa-1/latihan-2-huruf-hidup"
   locked={!isUnlocked(4)}
@@ -291,7 +291,7 @@ const handleLessonClick = (index: number) => {
   <LessonItem
   number={6}
   title="Quiz 2: Huruf Hidup"
-  duration="15 menit"
+  duration="10 menit"
   type="quiz"
    href="/materi/elementa-1/quiz-2-huruf-hidup"
   locked={!isUnlocked(5)}

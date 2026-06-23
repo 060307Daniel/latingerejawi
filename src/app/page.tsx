@@ -293,7 +293,7 @@ if (data?.id) {
   },*/
 
   {
-    title: "Quiz Terakhir",
+    title: "Ujian Terakhir",
     slug: "final-assessment",
     description:
       "Uji kembali pengetahuan yang sudah dipelajari untuk mendapatkan sertifikat",
