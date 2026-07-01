@@ -265,7 +265,7 @@ export default function PersiapanHurufMatiPage() {
             variant="outline"
             className="h-14 rounded-2xl px-10 text-lg"
           >
-            <Link href="/materi/elementa-1/pengenalan-huruf-ti">
+            <Link href="/materi/elementa-1/pengenalan-huruf-mati-ti">
               Kembali ke Materi
             </Link>
           </Button>

@@ -79,6 +79,8 @@ const seconds = Math.floor((cooldownLeft % 60000) / 1000);
     "fi lii",
     "fi-li-i",
     "philee",
+    "fili",
+    "filie"
   ],
 },
 {
@@ -254,7 +256,7 @@ const seconds = Math.floor((cooldownLeft % 60000) / 1000);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
 
-  const [timeLeft, setTimeLeft] = useState(600);
+  const [timeLeft, setTimeLeft] = useState(900);
   const [started, setStarted] = useState(false);
 
   const [showReview, setShowReview] = useState(false);
@@ -497,7 +499,7 @@ saveResult(passed).then(() => setSubmitted(true));
               </Button>
             </Link>
 
-            <h1 className="text-4xl font-black">QUIZ FINAL</h1>
+            <h1 className="text-4xl font-black">QUIZ DOA TANDA SALIB</h1>
           </div>
 
           {/* CARD INFO */}
@@ -674,8 +676,8 @@ saveResult(passed).then(() => setSubmitted(true));
 
          const getGrade = (score: number) => {
           if (score >= 90) return { label: "A", color: "text-green-600" };
-          if (score >= 70) return { label: "B", color: "text-blue-600" };
-          if (score >= 60) return { label: "C", color: "text-yellow-600" };
+          if (score >= 80) return { label: "B", color: "text-blue-600" };
+          if (score >= 70) return { label: "C", color: "text-yellow-600" };
           return { label: "D", color: "text-red-600" };
         };
 
@@ -712,7 +714,7 @@ saveResult(passed).then(() => setSubmitted(true));
             <div className="text-center mb-12">
 
               <div className="text-7xl mb-4">
-                {score >= 80 ? "🏆" : score >= 70 ? "🎉" : "📚"}
+                {score >= 90 ? "🏆" : score >= 70 ? "🎉" : "📚"}
               </div>
 
               <h2 className="text-4xl md:text-6xl font-black text-[#0d1333]">
@@ -941,7 +943,7 @@ ${answerCorrect
                     })}
                   </div>
 
-                  {/* MATERIAL SUMMARY (ONLY WRONG) */}
+                  {/* MATERIAL SUMMARY (ONLY WRONG) 
                   {weakTopics.length > 0 && (
                     <div className="mt-10 rounded-3xl bg-red-50 border border-red-100 p-6">
                       <h3 className="text-2xl font-black text-red-700">
@@ -961,7 +963,7 @@ ${answerCorrect
 
                       </div>
                     </div>
-                  )}
+                  )}*/}
 
 
                 </CardContent>

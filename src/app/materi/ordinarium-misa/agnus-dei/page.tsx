@@ -238,7 +238,7 @@ Silakan coba lagi nanti.`
 
         {/* BACK */}
         <Link
-          href="/materi/doa-doa-dasar"
+          href="/materi/ordinarium-misa"
           className="mb-8 inline-flex items-center gap-2  text-xl font-semibold text-[#0d1333] "
         >
           <ArrowLeft size={18} />

@@ -142,7 +142,7 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* RESET */}
+          {/* RESET 
           <button
             type="button"
             className="text-lg text-blue-600"

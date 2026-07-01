@@ -283,7 +283,7 @@ const handleLessonClick = (index: number) => {
   title="Latihan 2: Huruf Hidup"
   duration="5 menit"
   type="practice"
-  href="/materi/elementa-1/latihan-2-huruf-hidup"
+  href="/materi/elementa-1/persiapan-latihan-2"
   locked={!isUnlocked(4)}
   onLockedClick={() => handleLessonClick(4)}
 />
@@ -293,7 +293,7 @@ const handleLessonClick = (index: number) => {
   title="Quiz 2: Huruf Hidup"
   duration="10 menit"
   type="quiz"
-   href="/materi/elementa-1/quiz-2-huruf-hidup"
+   href="/materi/elementa-1/persiapan-quiz-2"
   locked={!isUnlocked(5)}
   onLockedClick={() => handleLessonClick(5)}
 />

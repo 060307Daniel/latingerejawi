@@ -387,7 +387,7 @@ export default function QuizDoaBapaKamiPage() {
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [submitted, setSubmitted] = useState(false);
 
-  const [timeLeft, setTimeLeft] = useState(600);
+  const [timeLeft, setTimeLeft] = useState(900);
   const [started, setStarted] = useState(false);
 
   const [showReview, setShowReview] = useState(false);
@@ -1057,7 +1057,7 @@ ${answerCorrect
                     })}
                   </div>
 
-                  {/* MATERIAL SUMMARY (ONLY WRONG) */}
+                  {/* MATERIAL SUMMARY (ONLY WRONG) 
                   {weakCategories.length > 0 && (
                     <div className="mt-10 rounded-3xl bg-red-50 border border-red-100 p-6">
                       <h3 className="text-2xl font-black text-red-700">
@@ -1077,7 +1077,7 @@ ${answerCorrect
 
                       </div>
                     </div>
-                  )}
+                  )}*/}
 
 
                 </CardContent>

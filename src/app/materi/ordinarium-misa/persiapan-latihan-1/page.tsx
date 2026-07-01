@@ -287,7 +287,7 @@ export default function PersiapanQuiz1TandaSalibPage() {
             variant="outline"
             className="h-14 rounded-2xl px-10 text-lg"
           >
-            <Link href="/materi/doa-doa-dasar/doa-tanda-salib">
+            <Link href="/materi/ordinarium-misa/agnus-dei">
               Kembali ke Materi
             </Link>
           </Button>

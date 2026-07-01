@@ -306,7 +306,7 @@ const seconds = Math.floor((cooldownLeft % 60000) / 1000);
   if (!started || questions.length === 0) {
     return (
       <main className="min-h-screen flex items-center justify-center">
-        <p>Memuat quiz...</p>
+        <p>Memuat ujian...</p>
       </main>
     );
   }
@@ -330,7 +330,7 @@ if (blocked) {
 
             {/* DESCRIPTION */}
             <p className="text-slate-900 text-base md:text-lg">
-              Anda sudah menggunakan 3 kali kesempatan Quiz tapi masih belum lulus. Silakan tunggu sebelum mencoba lagi.
+              Anda sudah menggunakan 3 kali kesempatan Ujian tapi masih belum lulus. Silakan tunggu sebelum mencoba lagi.
             </p>
 
             {/* TIMER CARD */}
@@ -354,7 +354,7 @@ if (blocked) {
 
             {/* INFO SMALL */}
             <p className="text-base text-slate-900">
-               Quiz akan otomatis terbuka jika waktu tunggu telah selesai
+               Ujian akan otomatis terbuka jika waktu tunggu telah selesai
             </p>
 
           </CardContent>
@@ -377,7 +377,7 @@ if (blocked) {
               </Button>
             </Link>
 
-            <h1 className="text-4xl font-black">QUIZ FINAL</h1>
+            <h1 className="text-4xl font-black">UJIAN TERAKHIR</h1>
           </div>
 
           {/* CARD INFO */}
@@ -602,11 +602,11 @@ const weakCategories = Object.keys(categoryMap).filter(
               </div>
 
               <h2 className="text-4xl md:text-6xl font-black text-[#0d1333]">
-                Hasil Quiz
+                Hasil Ujian
               </h2>
 
               <p className="mt-4 text-lg md:text-xl text-slate-600 max-w-xl mx-auto">
-                Berikut adalah performa Anda pada quiz ini
+                Berikut adalah performa Anda pada Ujian ini
               </p>
 
             </div>
@@ -813,7 +813,7 @@ ${answerCorrect
                     })}
                   </div>
 
-                  {/* MATERIAL SUMMARY (ONLY WRONG) */}
+                  {/* MATERIAL SUMMARY (ONLY WRONG)
                   {weakCategories.length > 0 && (
                     <div className="mt-10 rounded-3xl bg-red-50 border border-red-100 p-6">
                       <h3 className="text-2xl font-black text-red-700">
@@ -833,7 +833,7 @@ ${answerCorrect
 
                       </div>
                     </div>
-                  )}
+                  )}*/}
 
 
                 </CardContent>

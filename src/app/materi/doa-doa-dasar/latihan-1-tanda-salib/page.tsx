@@ -122,7 +122,8 @@ type Question = SpeechQuestion | MultipleQuestion;
     "fi lii",
     "filii",
     "fi-li-i",
-    "philee"
+    "philee",
+    "fili"
   ],
   hint: "Setiap huruf vokal harus terdengar jelas (fi-li-i).",
 },

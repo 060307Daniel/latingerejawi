@@ -238,7 +238,7 @@ useEffect(() => {
 <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
 
   <h1 className="text-3xl lg:text-5xl font-bold text-[#0d1333]">
-    Ordinarium Agnus Dei
+    Lagu Haec Dies
   </h1>
 
   <div className="flex items-center gap-3 rounded-2xl border bg-white px-5 py-3 shadow-sm">

@@ -37,12 +37,12 @@ export default function PenggunaanLatinPage() {
               Beranda
             </Link>
 
-            {/* ✅ GLOSARIUM BUTTON (SHADCN UI) */}
-            <Button asChild className="rounded-xl px-5 py-6 text-sm lg:px-8 lg:text-lg">
-              <Link href="/glosarium">
-                Glosarium
-              </Link>
-            </Button>
+        <Link
+              href="/glosarium"
+              className="flex items-center justify-center gap-2 rounded-xl bg-[#030326] px-5 py-3 text-sm font-semibold text-white lg:px-8 lg:py-4 lg:text-lg"
+            >
+              Glosarium
+            </Link>
 
             <Link
               href="/profile"
@@ -66,7 +66,7 @@ export default function PenggunaanLatinPage() {
             className="flex items-center gap-3 text-lg font-semibold text-[#111827]"
           >
             <ArrowLeft size={22} />
-            Kembali
+            Kembali ke Halaman Utama
           </Link>
         </div>
 

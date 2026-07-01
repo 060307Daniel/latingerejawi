@@ -286,108 +286,103 @@ export default function PersiapanQuiz1TandaSalibPage() {
       </footer>
 
       {showStartWarning && (
-  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/70 px-4">
-    
-    <Card className="w-full max-w-2xl rounded-3xl border-0 shadow-2xl">
-      <CardContent className="p-5 sm:p-8 lg:p-10">
+  <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/70 px-4 py-6">
 
-        {/* ICON */}
-        <div className="text-center">
-          <div className="mx-auto flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-red-100">
-            <span className="text-3xl sm:text-4xl">⚠️</span>
+    <div className="flex min-h-full items-center justify-center">
+
+      <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border-0 shadow-2xl">
+        <CardContent className="p-5 sm:p-8 lg:p-10">
+
+          {/* ICON */}
+          <div className="text-center">
+            <div className="mx-auto flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-red-100">
+              <span className="text-3xl sm:text-4xl">⚠️</span>
+            </div>
+
+            <h2 className="mt-4 text-2xl sm:text-3xl lg:text-4xl font-black text-[#0d1333]">
+              Mohon Perhatiannya
+            </h2>
+
+            <p className="mt-2 text-base sm:text-lg lg:text-xl text-slate-700">
+              Anda akan memulai <strong>Quiz 1: Tanda Salib</strong>
+            </p>
           </div>
 
-          <h2 className="mt-4 text-2xl sm:text-3xl lg:text-4xl font-black text-[#0d1333]">
-            Mohon Perhatiannya
-          </h2>
+          {/* WARNING BOX */}
+          <div className="mt-8 rounded-3xl border border-red-300 bg-red-50 p-6">
 
-          <p className="mt-2 text-base sm:text-lg lg:text-xl text-slate-700">
-            Anda akan memulai <strong>Quiz 1: Tanda Salib</strong>
-          </p>
-        </div>
+            <h3 className="text-2xl font-bold text-red-600">
+              Sebelum melanjutkan:
+            </h3>
 
-        {/* WARNING BOX */}
-         <div className="mt-8 rounded-3xl border border-red-300 bg-red-50 p-6">
+            <div className="mt-4 space-y-4">
 
+              <div className="flex items-start gap-3">
+                <span className="text-xl">•</span>
 
-          <h3 className="text-2xl font-bold text-red-600">
-            Sebelum melanjutkan:
-          </h3>
+                <p className="text-xl font-medium text-red-600">
+                  Quiz memiliki <strong>3 kali kesempatan.</strong> Jika pada kesempatan ketiga masih belum lulus,
+                  anda harus <strong>menunggu 30 Menit</strong> sebelum kesempatan selanjutnya.
+                </p>
+              </div>
 
+              <div className="flex items-start gap-3">
+                <span className="text-xl">•</span>
 
-          <div className="mt-4 space-y-4">
+                <p className="text-xl font-medium text-red-600">
+                  Jangan menekan tombol <strong>Kembali (Back)</strong>,
+                  menutup tab, atau me-refresh halaman selama quiz berlangsung.
+                </p>
+              </div>
 
+              <div className="flex items-start gap-3">
+                <span className="text-xl">•</span>
 
-            <div className="flex items-start gap-3">
-              <span className="text-xl">•</span>
+                <p className="text-xl font-medium text-red-600">
+                  Keluar dari halaman quiz dapat menyebabkan progres dan
+                  jawaban yang sedang dikerjakan tidak tersimpan.
+                </p>
+              </div>
 
-
-              <p className="text-xl font-medium text-red-600">
-                Quiz memiliki <strong> 3 kali kesempatan.</strong> Jika pada kesempatan ketiga masih belum lulus,
-                anda harus <strong>menunggu 30 Menit</strong> sebelum kesempatan selanjutnya.
-              </p>
             </div>
+          </div>
 
+          {/* QUESTION */}
+          <div className="mt-6 sm:mt-8 text-center">
+            <p className="text-lg sm:text-xl lg:text-2xl font-bold text-[#0d1333]">
+              Apakah Anda siap memulai quiz?
+            </p>
+          </div>
 
-                <div className="flex items-start gap-3">
-              <span className="text-xl">•</span>
+          {/* BUTTONS */}
+          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
 
+            <Button
+              variant="outline"
+              className="h-12 sm:h-14 rounded-2xl px-6 sm:px-8 text-sm sm:text-lg font-bold"
+              onClick={() => setShowStartWarning(false)}
+            >
+              Belum Siap
+            </Button>
 
-              <p className="text-xl font-medium text-red-600">
-                Jangan menekan tombol <strong>Kembali (Back)</strong>,
-                menutup tab, atau me-refresh halaman selama quiz berlangsung.
-              </p>
-            </div>
-
-
-            <div className="flex items-start gap-3">
-              <span className="text-xl">•</span>
-
-
-              <p className="text-xl font-medium text-red-600">
-                Keluar dari halaman quiz dapat menyebabkan progres dan
-                jawaban yang sedang dikerjakan tidak tersimpan.
-              </p>
-            </div>
-
+            <Button
+              className="h-12 sm:h-14 rounded-2xl bg-red-600 px-6 sm:px-8 text-sm sm:text-lg font-bold hover:bg-red-700"
+              onClick={() => {
+                window.location.href =
+                  "/materi/doa-doa-dasar/quiz-1-tanda-salib";
+              }}
+            >
+              Ya, Mulai Quiz
+            </Button>
 
           </div>
-        </div>
-        {/* QUESTION */}
-        <div className="mt-6 sm:mt-8 text-center">
-          <p className="text-lg sm:text-xl lg:text-2xl font-bold text-[#0d1333]">
-            Apakah Anda siap memulai quiz?
-          </p>
-        </div>
 
-        {/* BUTTONS */}
-        <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+        </CardContent>
+      </Card>
 
-          <Button
-            variant="outline"
-            className="h-12 sm:h-14 rounded-2xl px-6 sm:px-8 text-sm sm:text-lg font-bold"
-            onClick={() => setShowStartWarning(false)}
-          >
-            Belum Siap
-          </Button>
-
-          <Button
-            className="h-12 sm:h-14 rounded-2xl bg-red-600 px-6 sm:px-8 text-sm sm:text-lg font-bold hover:bg-red-700"
-            onClick={() => {
-              window.location.href =
-                "/materi/doa-doa-dasar/quiz-1-tanda-salib";
-            }}
-          >
-            Ya, Mulai Quiz
-          </Button>
-
-        </div>
-
-      </CardContent>
-    </Card>
+    </div>
 
   </div>
-
 )}
 
     </main>

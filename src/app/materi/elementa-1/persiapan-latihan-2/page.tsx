@@ -265,7 +265,7 @@ export default function PersiapanHurufHidupPage() {
             variant="outline"
             className="h-14 rounded-2xl px-10 text-lg"
           >
-            <Link href="/materi/elementa-1/pengenalan-huruf-ti">
+            <Link href="/materi/elementa-1/pengenalan-huruf-hidup-e">
               Kembali ke Materi
             </Link>
           </Button>

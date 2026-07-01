@@ -13,8 +13,6 @@ import InfoCard from "@/components/InfoCard";
 import SectionCard from "@/components/SectionCard";
 import PastorCard from "@/components/PastorCard";
 
-import BackgroundMusic from "@/components/BackgroundMusic";
-
 
 import {
   BookOpen,
@@ -381,7 +379,6 @@ const totalProgress =
   return (
     <main className="min-h-screen bg-[#f5f7fb] pb-10">
 
-       <BackgroundMusic />
 
       {/* HEADER */}
       <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
@@ -656,7 +653,7 @@ const totalProgress =
     <div className="group cursor-pointer rounded-3xl border border-red-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-red-200 hover:shadow-xl">
 
       <PastorCard
-        image="https://stfsp.ac.id/wp-content/uploads/2021/08/stenlyp-695x1024.jpg"
+        image="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTCCA2oFYSKXTqHN_oBsf6j5hnNfNhR3-43Nw&s"
         name="RP. Stenly Pondaag, MSC"
         position="Pengajar di Seminari Keuskupan"
         education={[
