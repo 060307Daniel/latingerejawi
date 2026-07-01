@@ -128,7 +128,7 @@ export default function RegisterPage() {
           {/* EMAIL */}
           <div>
             <label className="text-2xl font-semibold text-slate-700">
-              Alamat Email/No HP Anda:
+              Alamat Email
             </label>
 
             <input
