@@ -352,10 +352,13 @@ export default function ProfilePage() {
               "@/lib/generate-certificate"
             );
 
-            await generateCertificate(
-              userData.name,
-              userData.certificateIssuedAt
-            );
+            await generateCertificate({
+  userName: userData.name,
+  certificateDate: userData.certificateIssuedAt,
+  pastorName: userData.pastorName,
+  pastorTitle: userData.pastorTitle,
+  parishLogo: userData.parishLogo,
+});
           }}
           className="mt-6 h-12 w-full rounded-2xl bg-yellow-500 font-bold text-black hover:bg-yellow-600 transition"
         >
