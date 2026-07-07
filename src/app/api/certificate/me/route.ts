@@ -19,25 +19,31 @@ export async function GET(
     const token =
       authHeader.split(" ")[1];
 
+    console.log(
+  "JWT EXISTS:",
+  !!process.env.JWT_SECRET
+);
+
     const decoded: any =
       jwt.verify(
         token,
         process.env.JWT_SECRET!
       );
 
-    const user =
-      await prisma.user.findUnique({
-        where: {
-          id: decoded.id,
-        },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-          certificateIssuedAt: true,
-        },
-      });
+  const user =
+  await prisma.user.findUnique({
+    where: {
+      id: decoded.id,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      paroki: true,
+      certificateIssuedAt: true,
+    },
+  });
 
     if (!user) {
       return NextResponse.json(
@@ -51,15 +57,33 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(user);
-  } catch {
+    const certificateConfig =
+  await prisma.certificateConfig.findUnique({
+    where: {
+      paroki: user.paroki ?? "",
+    },
+  });
+
+    return NextResponse.json({
+  ...user,
+
+  pastorName: certificateConfig?.pastorName,
+  pastorTitle: certificateConfig?.pastorTitle,
+  parishLogo: certificateConfig?.parishLogo,
+});
+  } catch (error) {
+
+    console.error("Certificate API Error:", error);
+
     return NextResponse.json(
       {
         message: "Unauthorized",
+        error: String(error),
       },
       {
         status: 401,
       }
     );
+
   }
 }

@@ -91,6 +91,9 @@ export default function SertifikatPage() {
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("token");
+
+      console.log("TOKEN =", token);
+
       if (!token) return;
 
       const res = await fetch("/api/auth/me", {
@@ -116,25 +119,49 @@ export default function SertifikatPage() {
       if (!token) return alert("Silakan login terlebih dahulu");
 
       const res = await fetch("/api/certificate/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});
 
-      if (!res.ok) return alert("Gagal mengambil data sertifikat");
+const data = await res.json();
 
-      const user = await res.json();
-      if (!user?.name) return alert("Nama user tidak ditemukan");
+console.log("Status:", res.status);
+console.log("API Response:", data);
 
-      await generateCertificate(user.name, user.certificateIssuedAt);
+if (!res.ok) {
+  alert(data.message);
+  return;
+}
 
-      await fetch("/api/progress", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: user.id,
-          moduleSlug: "final-assessment",
-          lessonSlug: "sertifikat",
-        }),
-      });
+if (!data.name) {
+  alert("Nama user tidak ditemukan");
+  return;
+}
+
+console.log("MEMANGGIL GENERATE CERTIFICATE");
+
+await generateCertificate({
+  userName: data.name,
+  certificateDate: data.certificateIssuedAt,
+  pastorName: data.pastorName,
+  pastorTitle: data.pastorTitle,
+  parishLogo: data.parishLogo,
+});
+
+console.log("GENERATE CERTIFICATE SELESAI");
+
+await fetch("/api/progress", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    userId: data.id,
+    moduleSlug: "final-assessment",
+    lessonSlug: "sertifikat",
+  }),
+});
     } catch {
       alert("Terjadi kesalahan");
     }

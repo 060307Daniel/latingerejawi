@@ -73,3 +73,19 @@ model Message {
 
   createdAt DateTime @default(now())
 }
+
+model CertificateConfig {
+  id Int @id @default(autoincrement())
+
+  paroki String @unique
+
+  pastorName String
+
+  pastorTitle String
+
+  parishLogo String?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
