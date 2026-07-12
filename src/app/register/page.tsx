@@ -22,6 +22,9 @@ export default function RegisterPage() {
   const wilayahOptions =
     wilayahRohani[selectedParoki] || [];
 
+  const [successModal, setSuccessModal] =
+  useState(false);
+
   const handleRegister = async (
     e: React.FormEvent
   ) => {
@@ -49,12 +52,10 @@ export default function RegisterPage() {
       const data = await res.json();
 
       if (res.ok) {
-        alert("Registrasi berhasil!");
-
-        router.push("/login");
-      } else {
-        alert(data.message);
-      }
+  setSuccessModal(true);
+} else {
+  alert(data.message);
+}
     } catch (error) {
       console.log(error);
 
@@ -255,6 +256,38 @@ export default function RegisterPage() {
           Latin Gereja Katolik
         </p>
       </div>
+{successModal && (
+  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
+
+    <div className="w-[90%] max-w-md rounded-3xl bg-white p-8 shadow-xl">
+
+      <div className="text-center">
+
+        <h2 className="mt-4 text-3xl font-bold text-[#0d1333]">
+          Registrasi Berhasil!
+        </h2>
+
+        <p className="mt-4 text-lg leading-8 text-slate-900">
+          Akun Anda berhasil dibuat.
+          <br />
+          Silakan masuk menggunakan email dan password yang telah didaftarkan untuk mulai belajar di LatinGerejawi.
+        </p>
+
+      </div>
+
+      <button
+        onClick={() => router.push("/login")}
+        className="mt-8 w-full rounded-xl bg-red-600 py-4 text-lg font-semibold text-white transition hover:bg-red-700"
+      >
+        Login Sekarang
+      </button>
+
+    </div>
+
+  </div>
+)}
+
+
     </main>
   );
 }

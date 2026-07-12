@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft, BookOpen } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -48,11 +49,27 @@ export default function LoginPage() {
           JSON.stringify(data.user)
         );
 
-        alert("Login berhasil!");
+       toast.success("Login berhasil! Selamat datang kembali.");
 
-        router.push("/");
+setTimeout(() => {
+  switch (data.user.role) {
+    case "ADMIN":
+      router.push("/admin/dashboard");
+      break;
+
+    case "PASTOR":
+      router.push("/pastor/chat");
+      break;
+
+    default:
+      router.push("/");
+      break;
+  }
+}, 800);
       } else {
-        alert(data.message);
+        toast.error("Login gagal", {
+  description: data.message,
+});
       }
     } catch (error) {
       console.log(error);

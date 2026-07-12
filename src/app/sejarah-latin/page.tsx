@@ -36,7 +36,7 @@ export default function SejarahLatinPage() {
               Beranda
             </Link>
 
-            {/* 🔥 TAMBAHAN GLOSARIUM */}
+    
             <Link
               href="/glosarium"
               className="flex items-center justify-center gap-2 rounded-xl bg-[#030326] px-5 py-3 text-sm font-semibold text-white lg:px-8 lg:py-4 lg:text-lg"

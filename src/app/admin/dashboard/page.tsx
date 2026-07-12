@@ -323,7 +323,7 @@ const fetchCertificateConfig = async (paroki: string) => {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#f5f7fb]">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-red-600"></div>
+          {/*<div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-red-600"></div>*/}
           <div className="text-xl font-semibold text-slate-600">Memuat Dashboard...</div>
         </div>
       </div>
@@ -356,29 +356,60 @@ const removeLogo = () => {
   return (
     <main className="min-h-screen bg-[#f5f7fb] pb-10">
       
-      {/* ================= HEADER ================= */}
+       {/* HEADER */}
       <header className="sticky top-0 z-50 w-full border-b bg-white shadow-sm">
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-5 lg:flex-row lg:items-center lg:justify-between lg:px-6">
-          <div className="flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-red-600 text-white">
-              <BookOpen size={28} />
+
+          {/* LOGO */}
+          <div className="flex items-center gap-3 lg:gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-600 text-white lg:h-14 lg:w-14">
+              <BookOpen size={26} />
             </div>
+
             <div>
-              <h1 className="text-3xl font-bold text-[#0d1333]">LatinGerejawi</h1>
-              <p className="text-slate-500 font-medium">Dashboard Administrator</p>
+              <h1 className="text-2xl font-bold text-[#0d1333] lg:text-4xl">
+                LatinGerejawi
+              </h1>
+
+              <p className="text-sm text-slate-500 lg:text-lg">
+                Belajar Bahasa Latin Gerejawi
+              </p>
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Link href="/" className="flex items-center justify-center gap-2 rounded-xl bg-[#030326] px-6 py-3 text-white transition hover:bg-red-600">
-              <Home size={18} /> Beranda
+          {/* MENU */}
+          <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-end lg:w-auto lg:gap-4">
+           <Link
+              href="/"
+              className="flex items-center justify-center gap-2 rounded-xl bg-[#030326] px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90 lg:px-8 lg:py-4 lg:text-lg"
+            >
+              <Home size={20} />
+              Beranda
             </Link>
-            <Link href="/glosarium" className="flex items-center justify-center gap-2 rounded-xl bg-[#030326] px-6 py-3 text-white transition hover:bg-red-600">
-              <BookText size={18} /> Glosarium
+            <Link
+             href="/glosarium"
+             className="flex items-center justify-center gap-2 rounded-xl bg-[#030326] px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90 lg:px-8 lg:py-4 lg:text-lg" >
+             <BookText size={20} />
+             Glosarium
             </Link>
-            <Link href="/profile" className="flex items-center justify-center gap-2 rounded-xl bg-[#030326] px-6 py-3 text-white transition hover:bg-red-600">
-              <GraduationCap size={18} /> {user?.name}
-            </Link>
+
+            {user ? (
+              <Link
+                href="/profile"
+                className="flex items-center justify-center gap-2 rounded-xl bg-[#030326] px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90 lg:px-8 lg:py-4 lg:text-lg"
+              >
+                <GraduationCap size={20} />
+                {user.name || "Profil"}
+              </Link>
+            ) : (
+              <Link
+                href="/register"
+                className="flex items-center justify-center gap-2 rounded-xl bg-[#030326] px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90 lg:px-8 lg:py-4 lg:text-lg"
+              >
+                <GraduationCap size={20} />
+                Belum Masuk? Daftar Sekarang!
+              </Link>
+            )}
           </div>
         </div>
       </header>
@@ -1103,11 +1134,18 @@ const removeLogo = () => {
 
         
 
-        {/* ================= FOOTER ================= */}
-        <footer className="mt-16 border-t border-slate-200 py-10 text-center text-sm text-slate-500">
-          <p className="text-lg font-bold text-[#0d1333]">© 2026 Latin Gerejawi.</p>
-          <p className="mt-2 font-medium">Ad Maiorem Dei Gloriam — Belajar Bahasa Latin Gereja Katolik</p>
-        </footer>
+        {/* FOOTER */}
+      <div className="mt-14 text-center text-lg leading-9 text-slate-500">
+        <p>
+          © 2026 Latin Gerejawi. Ad Maiorem Dei
+          Gloriam.
+        </p>
+
+        <p>
+          Untuk Kemuliaan Tuhan - Belajar Bahasa
+          Latin Gereja Katolik
+        </p>
+      </div>
 
       </section>
     </main>

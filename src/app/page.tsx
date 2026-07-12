@@ -50,7 +50,12 @@ const [pastorId, setPastorId] = useState<string | null>(null);
 const [passedQuizCount, setPassedQuizCount] =
   useState(0);
 
+const [lockedModal, setLockedModal] = useState(false);
+const [lockedMessage, setLockedMessage] = useState("");
+
 const isPastor = user?.role === "PASTOR";
+
+const isAdmin = user?.role === "ADMIN";
 
   const fetchProgress = async (userId: number) => {
   try {
@@ -198,7 +203,7 @@ if (data?.id) {
 
    const modules = [
   {
-    title: "Elementa",
+    title: "1: Elementa",
     slug: "elementa-1",
     description:
       "Pengenalan huruf mati dan huruf hidup dalam bahasa Latin Gerejawi",
@@ -215,7 +220,7 @@ if (data?.id) {
   },
 
   {
-    title: "Doa-doa Dasar",
+    title: "2: Doa-doa Dasar",
     slug: "doa-doa-dasar",
     description:
       "Pengenalan doa-doa sederhana dalam Latin Gerejawi",
@@ -234,7 +239,7 @@ if (data?.id) {
   },
 
   {
-    title: "Ordinarium Misa",
+    title: "3: Ordinarium Misa",
     slug: "ordinarium-misa",
     description:
       "Penggunaan frasa liturgi dalam Gereja Katolik",
@@ -253,7 +258,7 @@ if (data?.id) {
   },
 
   {
-    title: "Puji Syukur",
+    title: "4: Puji Syukur",
     slug: "puji-syukur",
     description:
       "Memahami dan mendalami teks nyanyian dalam buku Puji Syukur",
@@ -339,13 +344,22 @@ const totalProgress =
     return percent >= 100;
   });
 
-  const handleLockedModule = (
-    moduleName: string
-  ) => {
-    alert(
-      `Materi ini hanya bisa diakses jika anda sudah menyelesaikan materi sebelumnya sebelum "${moduleName}".`
-    );
-  };
+const handleLockedModule = (
+  moduleName: string,
+  index: number
+) => {
+
+  const previousModule =
+    index > 0
+      ? modules[index - 1].title
+      : "modul sebelumnya";
+
+  setLockedMessage(
+  `Anda harus menyelesaikan seluruh modul pembelajaran "${previousModule}" terlebih dahulu.`
+);
+
+  setLockedModal(true);
+};
 
   const handleGuestAlert = () => {
     alert(
@@ -416,6 +430,17 @@ const totalProgress =
              <BookText size={20} />
              Glosarium
             </Link>
+
+            {/* KHUSUS ADMIN */}
+{isAdmin && (
+  <Link
+    href="/admin/dashboard"
+    className="flex items-center justify-center gap-2 rounded-xl bg-[#030326] px-5 py-3 text-sm font-semibold text-white transition hover:opacity-90 lg:px-8 lg:py-4 lg:text-lg"
+  >
+    <BookOpen size={20} />
+    Dashboard
+  </Link>
+)}
 
             {user ? (
               <Link
@@ -781,28 +806,6 @@ const totalProgress =
               Lihat Modul Pembelajaran
             </button>
           </div>
-
-          {/*<div className="mt-10 border-t pt-8">
-
-            <h2 className="text-2xl font-bold text-[#0d1333]">
-              Video Tutorial
-            </h2>
-
-            <p className="mt-2 text-base text-slate-500">
-              Masih bingung? Nonton video tutorialnya saja!
-            </p>
-
-            <div className="mt-6 overflow-hidden rounded-3xl">
-              <div className="aspect-video w-full">
-                <iframe
-                  className="h-full w-full"
-                  src="https://www.youtube.com/embed/DaeoQYkPS2Y"
-                  title="Video Tutorial"
-                  allowFullScreen
-                />
-              </div>
-            </div>
-          </div>*/}
         </div>
 
         {/* MODUL KURSUS */}
@@ -947,6 +950,9 @@ const percent = Math.round(
 
 const isCompleted = percent >= 100;
 
+const isInProgress =
+  percent > 0 && percent < 100;
+
               return (
                 <div
                   key={index}
@@ -958,14 +964,17 @@ const isCompleted = percent >= 100;
                       !module.unlocked
                     ) {
                       handleLockedModule(
-                        module.title
-                      );
+  module.title,
+  index
+);
                     }
                   }}
                   className={`rounded-3xl border p-6 shadow-sm transition hover:shadow-md ${
   isCompleted
     ? "border-yellow-300 bg-gradient-to-br from-yellow-50 via-amber-50 to-yellow-100"
-    : "bg-white"
+    : isInProgress
+    ? "border-red-500 bg-gradient-to-br from-red-50 via-white to-red-50"
+    : "border-slate-200 bg-white"
 }`}
                 >
 
@@ -981,6 +990,8 @@ const isCompleted = percent >= 100;
                           className={`text-2xl font-bold transition ${
   isCompleted
     ? "text-yellow-700"
+    : isInProgress
+    ? "text-red-700"
     : module.unlocked
     ? "text-[#0d1333] hover:text-red-600"
     : "text-slate-500"
@@ -1009,6 +1020,12 @@ const isCompleted = percent >= 100;
   </div>
 )}
 
+{isInProgress && (
+  <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-red-100 px-3 py-1 text-sm font-semibold text-red-700">
+    📖 Sedang Dipelajari
+  </div>
+)}
+
                   <div className="mt-8 flex items-center justify-between text-sm font-semibold text-slate-500">
                     <span>
   {module.completed} / {module.lessons} pelajaran
@@ -1024,7 +1041,9 @@ const isCompleted = percent >= 100;
                       className={`h-full rounded-full transition-all duration-500 ${
   isCompleted
     ? "bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-600"
-    : "bg-red-600"
+    : isInProgress
+    ? "bg-gradient-to-r from-red-500 to-red-700"
+    : "bg-slate-400"
 }`}
                       style={{
                         width: `${percent}%`,
@@ -1043,10 +1062,12 @@ const isCompleted = percent >= 100;
                           <div
   key={idx}
   className={`h-2 w-2 rounded-full ${
-    isCompleted
-      ? "bg-yellow-500"
-      : "bg-slate-300"
-  }`}
+  isCompleted
+    ? "bg-yellow-500"
+    : isInProgress
+    ? "bg-red-500"
+    : "bg-slate-300"
+}`}
 />
                         )
                       )}
@@ -1185,6 +1206,42 @@ const isCompleted = percent >= 100;
           Latin Gereja Katolik
         </p>
       </div>
+
+{lockedModal && (
+  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
+
+    <div className="w-[90%] max-w-md rounded-3xl bg-white p-7 shadow-2xl">
+
+      <div className="text-center">
+
+        <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-red-100">
+          <Lock className="text-red-600" size={40} />
+        </div>
+
+        <h2 className="text-3xl font-bold text-[#0d1333]">
+          Modul Terkunci
+        </h2>
+
+        <p className="mt-2 break-words whitespace-pre-line text-xl text-slate-900">
+  {lockedMessage}
+</p>
+
+      </div>
+
+      <button
+        onClick={() => setLockedModal(false)}
+        className="mt-8 w-full rounded-xl bg-red-600 py-3 text-lg font-semibold text-white transition hover:bg-red-700"
+      >
+        Mengerti
+      </button>
+
+    </div>
+
+  </div>
+)}
+
+
+
     </main>
   );
 }

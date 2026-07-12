@@ -227,7 +227,7 @@ export default function KamusPage() {
             className="flex items-center gap-3 text-lg font-semibold text-[#111827]"
           >
             <ArrowLeft size={22} />
-            Kembali ke Dashboard
+            Kembali ke Beranda
           </Link>
         </div>
 
