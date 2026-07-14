@@ -7,85 +7,66 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      String   @default("USER")
-
+  id                  String         @id @default(cuid())
+  name                String
+  email               String         @unique
+  password            String
+  role                String         @default("USER")
   certificateIssuedAt DateTime?
-
-  paroki    String?
-  wilayah   String?
-
-  createdAt DateTime @default(now())
-
-  progress  UserProgress[]
-
-  roomsAsUser   ChatRoom[] @relation("UserRooms")
-  roomsAsPastor ChatRoom[] @relation("PastorRooms")
+  paroki              String?
+  wilayah             String?
+  createdAt           DateTime       @default(now())
+  roomsAsPastor       ChatRoom[]     @relation("PastorRooms")
+  roomsAsUser         ChatRoom[]     @relation("UserRooms")
+  progress            UserProgress[]
 }
 
 model UserProgress {
-  id Int @id @default(autoincrement())
-
-  userId String   
-
-  moduleSlug String
-  lessonSlug String
-
-  completed Boolean @default(false)
-
+  id          Int       @id @default(autoincrement())
+  userId      String
+  moduleSlug  String
+  lessonSlug  String
+  completed   Boolean   @default(false)
   completedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, moduleSlug, lessonSlug])
 }
 
-
 model ChatRoom {
-  id        String   @id @default(cuid())
-
-  userId    String
-  pastorId  String
-
-  user      User     @relation("UserRooms", fields: [userId], references: [id])
-  pastor    User     @relation("PastorRooms", fields: [pastorId], references: [id])
-
-  messages  Message[]
-
+  id          String    @id @default(cuid())
+  userId      String
+  pastorId    String
   lastMessage String?
-  updatedAt DateTime @updatedAt
-  createdAt DateTime @default(now())
+  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime  @default(now())
+  pastor      User      @relation("PastorRooms", fields: [pastorId], references: [id])
+  user        User      @relation("UserRooms", fields: [userId], references: [id])
+  messages    Message[]
+
+  @@index([pastorId], map: "ChatRoom_pastorId_fkey")
+  @@index([userId], map: "ChatRoom_userId_fkey")
 }
 
 model Message {
   id        String   @id @default(cuid())
-
   roomId    String
   senderId  String
   text      String
-
+  createdAt DateTime @default(now())
   room      ChatRoom @relation(fields: [roomId], references: [id])
 
-  createdAt DateTime @default(now())
+  @@index([roomId], map: "Message_roomId_fkey")
 }
 
 model CertificateConfig {
-  id Int @id @default(autoincrement())
-
-  paroki String @unique
-
-  pastorName String
-
+  id          Int      @id @default(autoincrement())
+  paroki      String   @unique
+  pastorName  String
   pastorTitle String
-
-  parishLogo String?
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
+  parishLogo  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

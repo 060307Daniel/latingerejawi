@@ -1,12 +1,20 @@
+import fs from "fs";
 import { PrismaClient } from "@prisma/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 
-const connectionString = process.env.DATABASE_URL!;
+const adapter = new PrismaMariaDb({
+  host: process.env.DATABASE_HOST!,
+  port: Number(process.env.DATABASE_PORT),
+  user: process.env.DATABASE_USER!,
+  password: process.env.DATABASE_PASSWORD!,
+  database: process.env.DATABASE_NAME!,
+  ssl: {
+    ca: fs.readFileSync("./certs/ca.pem"),
+  },
+});
 
-const adapter = new PrismaMariaDb(connectionString);
-
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
+const globalForPrisma = globalThis as {
+  prisma?: PrismaClient;
 };
 
 export const prisma =

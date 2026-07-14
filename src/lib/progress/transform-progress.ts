@@ -24,13 +24,13 @@ export function transformProgress(data: any[]) {
     "latihan-2-bapa-kami",
     "quiz-2-bapa-kami",
 
-    "doa-salam-maria",
+     /*"doa-salam-maria",
     "latihan-3-salam-maria",
     "quiz-3-salam-maria",
 
     "doa-kemuliaan",
     "latihan-4-kemuliaan",
-    "quiz-4-kemuliaan",
+    "quiz-4-kemuliaan", */
 
     // =====================
     // ORDINARIUM MISA
