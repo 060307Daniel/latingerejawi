@@ -1,6 +1,12 @@
 import fs from "fs";
+import path from "path";
 import { PrismaClient } from "@prisma/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+
+const certPath = path.join(process.cwd(), "certs", "ca.pem");
+
+console.log("CA Exists:", fs.existsSync(certPath));
+console.log("CA Path:", certPath);
 
 const adapter = new PrismaMariaDb({
   host: process.env.DATABASE_HOST!,
@@ -9,7 +15,7 @@ const adapter = new PrismaMariaDb({
   password: process.env.DATABASE_PASSWORD!,
   database: process.env.DATABASE_NAME!,
   ssl: {
-    ca: fs.readFileSync("./certs/ca.pem"),
+    ca: fs.readFileSync(certPath, "utf8"),
   },
 });
 
