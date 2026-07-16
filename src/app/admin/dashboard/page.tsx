@@ -71,12 +71,26 @@ interface DashboardResponse {
   users: DashboardUser[];
 }
 
+
 /* =====================================================
    COMPONENT
 ===================================================== */
 
 export default function AdminDashboardPage() {
   /* ---------------- STATE ---------------- */
+
+const [popup, setPopup] = useState<{
+  open: boolean;
+  title: string;
+  message: string;
+  success: boolean;
+}>({
+  open: false,
+  title: "",
+  message: "",
+  success: true,
+});
+
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [dashboard, setDashboard] = useState<DashboardResponse | null>(null);
@@ -159,16 +173,31 @@ const saveCertificateConfig = async () => {
     const data = await res.json();
 
     if (!res.ok) {
-      alert(data.message);
-      return;
-    }
+  setPopup({
+    open: true,
+    title: "Gagal",
+    message: data.message,
+    success: false,
+  });
+  return;
+}
 
-    alert("Pengaturan berhasil disimpan.");
+setPopup({
+  open: true,
+  title: "Berhasil!",
+  message: "Perubahan sertifikat berhasil disimpan.",
+  success: true,
+});
 
     fetchCertificateConfig(selectedCertificateParoki);
   } catch (err) {
     console.error(err);
-    alert("Gagal menyimpan.");
+   setPopup({
+  open: true,
+  title: "Gagal!",
+  message: "Terjadi kesalahan saat menyimpan data.",
+  success: false,
+});
   } finally {
     setSaving(false);
   }
@@ -1146,6 +1175,52 @@ const removeLogo = () => {
           Latin Gereja Katolik
         </p>
       </div>
+
+{popup.open && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className="w-[400px] rounded-2xl bg-white p-6 shadow-2xl">
+
+      <div className="flex flex-col items-center">
+
+        <div
+          className={`mb-4 flex h-16 w-16 items-center justify-center rounded-full text-3xl ${
+            popup.success
+              ? "bg-green-100 text-green-600"
+              : "bg-red-100 text-red-600"
+          }`}
+        >
+          {popup.success ? "✓" : "✕"}
+        </div>
+
+        <h2 className="text-2xl font-bold">
+          {popup.title}
+        </h2>
+
+        <p className="text-lg mt-2 text-center text-gray-900">
+          {popup.message}
+        </p>
+
+        <button
+          onClick={() =>
+            setPopup({
+              ...popup,
+              open: false,
+            })
+          }
+          className={`mt-6 w-full rounded-lg py-2 font-semibold text-white ${
+            popup.success
+              ? "bg-green-600 hover:bg-green-700"
+              : "bg-red-600 hover:bg-red-700"
+          }`}
+        >
+          OK
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+)}
 
       </section>
     </main>
