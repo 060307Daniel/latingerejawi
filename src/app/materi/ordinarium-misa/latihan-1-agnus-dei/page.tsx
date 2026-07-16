@@ -1472,7 +1472,7 @@ const weakCategories =
                                     className="h-14 rounded-2xl bg-red-600 px-8 text-lg"
                                     onClick={() => {
                                         window.location.href =
-                                            "/materi/ordinarium-misa/quiz-1-agnus-dei";
+                                            "/materi/ordinarium-misa/persiapan-quiz-1";
                                     }}
                                 >
                                     Mulai Quiz

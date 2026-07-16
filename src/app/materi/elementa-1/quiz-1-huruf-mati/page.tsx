@@ -420,7 +420,7 @@ const getLevelLabel = (grade: string) => {
     case "B":
       return "Mantap, Hasil Kamu Baik!";
     case "C":
-      return "Hampir!! Anda harus mengulang lagi";
+      return "Lulus tapi masih perlu belajar lebih giat";
     default:
       return "Maaf ya, anda masih perlu untuk mengulang lagi :(";
   }

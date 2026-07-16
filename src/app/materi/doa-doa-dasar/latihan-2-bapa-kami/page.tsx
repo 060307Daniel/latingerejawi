@@ -1631,7 +1631,7 @@ const weakCategories =
                                     className="h-14 rounded-2xl bg-red-600 px-8 text-lg"
                                     onClick={() => {
                                         window.location.href =
-                                            "/materi/doa-doa-dasar/quiz-2-tanda-salib";
+                                            "/materi/doa-doa-dasar/persiapan-quiz-2";
                                     }}
                                 >
                                     Mulai Quiz

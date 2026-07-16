@@ -691,7 +691,7 @@ saveResult(passed).then(() => setSubmitted(true));
             case "B":
               return "Mantap, Hasil Kamu Baik!";
             case "C":
-              return "Hampir!! Anda harus mengulang lagi";
+              return "lulus tapi masih perlu belajar lebih giat";
             default:
               return "Maaf ya, anda masih perlu untuk mengulang lagi :(";
           }
