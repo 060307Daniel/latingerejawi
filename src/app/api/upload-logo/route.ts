@@ -46,9 +46,12 @@ export async function POST(req: NextRequest) {
     // ==========================================
     // VERCEL → upload ke Blob
     // ==========================================
-    const blob = await put(file.name, file, {
-      access: "public",
-    });
+   const filename =
+  Date.now() + "-" + file.name.replace(/\s+/g, "-");
+
+const blob = await put(filename, file, {
+  access: "public",
+});
 
     return NextResponse.json({
       url: blob.url,
